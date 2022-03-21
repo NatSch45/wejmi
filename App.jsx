@@ -1,14 +1,28 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import Register from "./components/screens/Register";
-import { NavigationContainer, useTheme } from '@react-navigation/native';
-import { NativeBaseProvider, extendTheme } from "native-base";
+import { NativeBaseProvider, Button, useTheme, Box } from "native-base";
+import { StyleSheet, Text, View, useColorScheme } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Item from "./components/screens/Object.jsx";
+import { NativeBaseConfigProvider } from "native-base";
+
+const { Navigator, Screen } = createNativeStackNavigator();
 
 export default function App() {
-
+    const scheme = useColorScheme();
     return (
-        <NativeBaseProvider theme={theme}>
-            <Register />
+        <NativeBaseProvider>
+            <NavigationContainer>
+                <Navigator>
+                    <Screen
+                        name="Objet"
+                        component={Item}
+                        options={{
+                            headerStyle: { backgroundColor: "#1e90ff" },
+                        }}
+                    ></Screen>
+                </Navigator>
+            </NavigationContainer>
             <StatusBar style="auto" />
         </NativeBaseProvider>
     );
@@ -17,10 +31,9 @@ export default function App() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-		alignItems: "stretch",
-		justifyContent: "flex-start",
-		backgroundColor: "#fff",
-        padding: 10,
+        backgroundColor: "#fff",
+        alignItems: "center",
+        justifyContent: "center",
     },
 });
 
