@@ -4,7 +4,8 @@ import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Item from "./components/screens/Object.jsx";
-import { NativeBaseConfigProvider } from "native-base";
+import Register from "./components/screens/Register.jsx";
+import { extendTheme } from "native-base";
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
@@ -14,12 +15,19 @@ export default function App() {
         <NativeBaseProvider>
             <NavigationContainer>
                 <Navigator>
-                    <Screen
+                    {/* <Screen
                         name="Objet"
                         component={Item}
                         options={{
                             headerStyle: { backgroundColor: "#1e90ff" },
                         }}
+                    ></Screen> */}
+                    <Screen
+                    name="Register"
+                    component={Register}
+                    options={{
+                        headerStyle: { backgroundColor: "#1e90ff" },
+                    }}
                     ></Screen>
                 </Navigator>
             </NavigationContainer>
