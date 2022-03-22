@@ -3,22 +3,39 @@ import { useDisclose, HStack, Center } from "native-base";
 import { useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import CamView from "./CamView.jsx";
+import { openImage, openCamera } from "./ImagePicker.jsx";
 
 export default () => {
-    const [image, setImage] = useState(null);
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            aspect: [16, 9],
-            quality: 1,
-        });
-        console.log(result);
-        if (!result.cancelled) {
-            setImage(result.uri);
+    /* const [image, setImage] = useState(null);
+    const [cam, setCam] = useState(null);
+     */
+
+    /* let openImage = async () => {
+        let permissionResult =
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (permissionResult.granted === false) {
+            alert("Permission to access camera roll is required!");
+            return;
         }
-    };
+
+        let pickerResult = await ImagePicker.launchImageLibraryAsync();
+        console.log(pickerResult);
+    }; */
+
+    /* let openCamera = async () => {
+        let permissionResult =
+            await ImagePicker.requestCameraPermissionsAsync();
+
+        if (permissionResult.granted === false) {
+            alert("Permission to access camera roll is required!");
+            return;
+        }
+
+        let pickerResult = await ImagePicker.launchCameraAsync();
+        console.log(pickerResult);
+    }; */
+
     const { isOpen, onToggle } = useDisclose();
     return (
         <Center height={200} width={{ base: 100 }}>
@@ -66,7 +83,7 @@ export default () => {
                             as={MaterialIcons}
                             size="6"
                             name="photo-library"
-                            onPress={pickImage}
+                            onPress={openImage}
                             _dark={{
                                 color: "warmGray.50",
                             }}
@@ -85,7 +102,7 @@ export default () => {
                             as={MaterialIcons}
                             size="6"
                             name="camera"
-                            onPress={CamView}
+                            onPress={openCamera}
                             _dark={{
                                 color: "warmGray.50",
                             }}

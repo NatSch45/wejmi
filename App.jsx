@@ -15,7 +15,7 @@ export default function App() {
             <NavigationContainer>
                 <Navigator>
                     <Screen
-                        name="Objet"
+                        name="Ajouter ou modifier un objet"
                         component={Item}
                         options={{
                             headerStyle: { backgroundColor: "#1e90ff" },

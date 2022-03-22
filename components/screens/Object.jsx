@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 import {
     CheckIcon,
     FormControl,
@@ -8,6 +8,7 @@ import {
     Stagger,
     TextArea,
     useTheme,
+    Text,
 } from "native-base";
 import { NativeBaseProvider, Input } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
