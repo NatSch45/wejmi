@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Item from "./components/screens/Object.jsx";
 import Register from "./components/screens/Register.jsx";
+import Login from "./components/screens/Login.jsx";
 import { extendTheme } from "native-base";
 
 const { Navigator, Screen } = createNativeStackNavigator();
@@ -12,7 +13,7 @@ const { Navigator, Screen } = createNativeStackNavigator();
 export default function App() {
     const scheme = useColorScheme();
     return (
-        <NativeBaseProvider>
+        <NativeBaseProvider theme={theme}>
             <NavigationContainer>
                 <Navigator>
                     {/* <Screen
@@ -21,14 +22,21 @@ export default function App() {
                         options={{
                             headerStyle: { backgroundColor: "#1e90ff" },
                         }}
-                    ></Screen> */}
+                    /> */}
                     <Screen
-                    name="Register"
-                    component={Register}
-                    options={{
-                        headerStyle: { backgroundColor: "#1e90ff" },
-                    }}
-                    ></Screen>
+                        name="Register"
+                        component={Register}
+                        options={{
+                            headerStyle: { backgroundColor: "#1e90ff" },
+                        }}
+                    />
+                    <Screen
+                        name="Log In"
+                        component={Login}
+                        options={{
+                            headerStyle: { backgroundColor: "#1e90ff" },
+                        }}
+                    />
                 </Navigator>
             </NavigationContainer>
             <StatusBar style="auto" />
@@ -36,29 +44,32 @@ export default function App() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-});
-
 const theme = extendTheme({
     components: {
+        View: {
+            variants: {
+                container: () => {
+                    return {
+                        flex: 1,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }
+                }
+            }
+        },
         Text: {
             baseStyle: {
                 // default style for entire app
             },
             variants: { // Exemple de déclaration de variants :
-            //     subText: () => {
-            //         return {
-            //             color: '#787878',
-            //             fontSize: 'sm'
-            //         }
-            //     }
+                subText: () => {
+                    return {
+                        marginTop: 30,
+                        color: '#787878',
+                        fontSize: 16,
+                    }
+                }
             }
-        }
+        },
     }
 })
