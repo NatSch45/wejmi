@@ -3,6 +3,7 @@ import {
     CheckIcon,
     FormControl,
     Icon,
+    ScrollView,
     Select,
     TextArea,
     useTheme,
@@ -23,7 +24,7 @@ export default function Item() {
 
     return (
         <NativeBaseProvider>
-            <View style={styles.container}>
+            <ScrollView style={styles.container}>
                 <Stack marginBottom={10} space={1} alignItems="center" w="100%">
                     <Input
                         size="lg"
@@ -141,7 +142,7 @@ export default function Item() {
                     <Add action={display}></Add>
                 </Stack>
                 <MenuIcon></MenuIcon>
-            </View>
+            </ScrollView>
         </NativeBaseProvider>
     );
 }
