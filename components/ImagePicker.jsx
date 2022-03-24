@@ -1,5 +1,4 @@
 import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
 
 export let openImage = async () => {
     let permissionResult =

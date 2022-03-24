@@ -38,7 +38,7 @@ export default () => {
 
     const { isOpen, onToggle } = useDisclose();
     return (
-        <Center height={200} width={{ base: 100 }}>
+        <Center height={200} width={{ base: 100 }} style={{ marginTop: -170 }}>
             <Stagger
                 visible={isOpen}
                 initial={{
