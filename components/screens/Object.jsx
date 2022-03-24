@@ -1,88 +1,148 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import {
     CheckIcon,
-    Container,
     FormControl,
+    Icon,
+    ScrollView,
     Select,
+    TextArea,
     useTheme,
-    WarningOutlineIcon,
 } from "native-base";
-import { NativeBaseProvider, Box, Input } from "native-base";
+import { useState } from "react";
+import { NativeBaseProvider, Input, Button, View, Stack } from "native-base";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import MenuIcon from "../MenuIcon.jsx";
+import Add from "../Button.jsx";
 
-const Error = () => {
-    return (
-        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-            Ce champ est obligatoire !
-        </FormControl.ErrorMessage>
-    );
-};
-
-export default function () {
+export default function Item() {
     const { colors } = useTheme();
+    const [name, SetName] = useState("");
+
+    const display = () => {
+        console.log(name);
+    };
+
     return (
         <NativeBaseProvider>
-            <View style={styles.container}>
-                <Input
-                    size="lg"
-                    variant="underlined"
-                    placeholder="Nom"
-                    w="75%"
-                />
-            </View>
-            <View style={styles.form}>
-                <FormControl
-                    style={styles.spaceBetween}
-                    w="3/4"
-                    maxW="300"
-                    isRequired
-                    isInvalid
-                >
-                    <FormControl.Label>Pièce :</FormControl.Label>
-                    <Select
-                        minWidth="200"
-                        accessibilityLabel="Choisir la pièce"
-                        placeholder="Choisir la pièce"
-                        _selectedItem={{
-                            bg: "teal.600",
-                            endIcon: <CheckIcon size={5} />,
+            <ScrollView style={styles.container}>
+                <Stack marginBottom={10} space={1} alignItems="center" w="100%">
+                    <Input
+                        size="lg"
+                        variant="underlined"
+                        placeholder="Nom"
+                        borderColor="blue.400"
+                        value={name}
+                        onChangeText={(name) => {
+                            SetName(name);
                         }}
-                        mt="1"
+                        w="75%"
+                    />
+                </Stack>
+                <Stack space={4} alignItems="center" w="100%">
+                    <FormControl w="3/4" maxW="300" style={styles.spaceBetween}>
+                        <FormControl.Label>Compartiment :</FormControl.Label>
+                        <TextArea h={20} placeholder="Description" maxW="300" />
+                    </FormControl>
+
+                    <FormControl
+                        style={styles.spaceBetween}
+                        w="3/4"
+                        maxW="300"
+                        isRequired
                     >
-                        <Select.Item label="Cuisine" value="Cuisine" />
-                        <Select.Item
-                            label="Salle à manger"
-                            value="Salle à manger"
-                        />
-                        <Select.Item
-                            label="Salle de bain"
-                            value="Salle de bain"
-                        />
-                        <Select.Item label="Chambre" value="Chambre" />
-                        <Select.Item label="Jardin" value="Jardin" />
-                    </Select>
-                    <FormControl.ErrorMessage
-                        leftIcon={<WarningOutlineIcon size="xs" />}
-                    >
-                        Ce champ est obligatoire !
-                    </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl w="3/4" maxW="300" style={styles.spaceBetween}>
-                    <FormControl.Label>Meuble :</FormControl.Label>
-                    <Select
-                        minWidth="200"
-                        accessibilityLabel="Choisir le meuble"
-                        placeholder="Choisir le meuble"
-                        _selectedItem={{
-                            bg: "teal.600",
-                            endIcon: <CheckIcon size={5} />,
-                        }}
-                        mt="1"
-                    >
-                        <Select.Item label="Armoire" value="Armoire" />
-                        <Select.Item label="Placard" value="Placard" />
-                    </Select>
-                </FormControl>
-            </View>
+                        <FormControl.Label>Pièce :</FormControl.Label>
+                        <Select
+                            minWidth="200"
+                            accessibilityLabel="Choisir la pièce"
+                            placeholder="Choisir la pièce"
+                            dropdownIcon={
+                                <Icon
+                                    as={MaterialCommunityIcons}
+                                    size="6"
+                                    name="chevron-down"
+                                    color="blue.400"
+                                    _dark={{
+                                        color: "warmGray.50",
+                                    }}
+                                />
+                            }
+                            _selectedItem={{
+                                bg: "teal.600",
+                                endIcon: <CheckIcon size={5} />,
+                            }}
+                            mt="1"
+                        >
+                            <Select.Item label="Cuisine" value="Cuisine" />
+                            <Select.Item
+                                label="Salle à manger"
+                                value="Salle à manger"
+                            />
+                            <Select.Item
+                                label="Salle de bain"
+                                value="Salle de bain"
+                            />
+                            <Select.Item label="Chambre" value="Chambre" />
+                            <Select.Item label="Jardin" value="Jardin" />
+                        </Select>
+                    </FormControl>
+                    <FormControl w="3/4" maxW="300" style={styles.spaceBetween}>
+                        <FormControl.Label>Meuble :</FormControl.Label>
+                        <Select
+                            minWidth="200"
+                            accessibilityLabel="Choisir le meuble"
+                            placeholder="Choisir le meuble"
+                            dropdownIcon={
+                                <Icon
+                                    as={MaterialCommunityIcons}
+                                    size="6"
+                                    name="chevron-down"
+                                    color="blue.400"
+                                    _dark={{
+                                        color: "warmGray.50",
+                                    }}
+                                />
+                            }
+                            _selectedItem={{
+                                bg: "teal.600",
+                                endIcon: <CheckIcon size={5} />,
+                            }}
+                            mt="1"
+                        >
+                            <Select.Item label="Armoire" value="Armoire" />
+                            <Select.Item label="Placard" value="Placard" />
+                        </Select>
+                    </FormControl>
+                    <FormControl w="3/4" maxW="300" style={styles.spaceBetween}>
+                        <FormControl.Label>Catégorie :</FormControl.Label>
+                        <Select
+                            minWidth="200"
+                            dropdownIcon={
+                                <Icon
+                                    as={MaterialCommunityIcons}
+                                    size="6"
+                                    name="chevron-down"
+                                    color="blue.400"
+                                    _dark={{
+                                        color: "warmGray.50",
+                                    }}
+                                />
+                            }
+                            accessibilityLabel="Choisir le meuble"
+                            placeholder="Choisir le meuble"
+                            _selectedItem={{
+                                bg: "teal.600",
+                                endIcon: <CheckIcon size={5} />,
+                            }}
+                            mt="1"
+                        >
+                            <Select.Item label="Outil" value="Outil" />
+                            <Select.Item label="Documents" value="Documents" />
+                        </Select>
+                    </FormControl>
+                    <Add action={display}></Add>
+                </Stack>
+                <MenuIcon></MenuIcon>
+            </ScrollView>
         </NativeBaseProvider>
     );
 }
@@ -90,17 +150,18 @@ export default function () {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: "center",
-        justifyContent: "flex-start",
         paddingTop: 100,
     },
     form: {
-        flex: 2,
+        flex: 1,
         alignItems: "center",
         justifyContent: "flex-start",
         marginBottom: 200,
     },
     spaceBetween: {
         marginBottom: 25,
+    },
+    button: {
+        flex: 1,
     },
 });
