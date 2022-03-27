@@ -16,13 +16,6 @@ export default function App() {
         <NativeBaseProvider theme={theme}>
             <NavigationContainer>
                 <Navigator>
-                    {/* <Screen
-                        name="Objet"
-                        component={Item}
-                        options={{
-                            headerStyle: { backgroundColor: "#1e90ff" },
-                        }}
-                    /> */}
                     <Screen
                         name="Register"
                         component={Register}
@@ -33,6 +26,13 @@ export default function App() {
                     <Screen
                         name="Log In"
                         component={Login}
+                        options={{
+                            headerStyle: { backgroundColor: "#1e90ff" },
+                        }}
+                    />
+                    <Screen
+                        name="Object"
+                        component={Item}
                         options={{
                             headerStyle: { backgroundColor: "#1e90ff" },
                         }}

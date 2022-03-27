@@ -1,9 +1,21 @@
 import { Button, Input, Stack, View, Link, Icon, Text, IconButton } from "native-base";
 import { StyleSheet, LogBox } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesome5, Entypo } from "@expo/vector-icons";
+import * as FileSystem from "expo-file-system"
 
 LogBox.ignoreLogs(['NativeBase:']);
+
+const fileURI = FileSystem.documentDirectory + "accounts.json"
+
+const createFile = async (accounts) => {
+	await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(accounts))
+    // console.log(await FileSystem.getInfoAsync(fileURI))
+}
+
+const fileExists = async (uri) => {
+    return (await FileSystem.getInfoAsync(uri)).exists
+}
 
 export default ({navigation}) => {
     const [email, setEmail] = useState("");
@@ -12,10 +24,32 @@ export default ({navigation}) => {
     const [show, setShow] = useState(false);
     const togglePwdDisplay = () => setShow(!show);
 
+    const [accounts, setAccounts] = useState([]);
+
+    const readFile = async () => {
+        if (await fileExists(fileURI)) {
+            const content = await FileSystem.readAsStringAsync(fileURI)
+            setAccounts(JSON.parse(content))
+        }
+    }
+    useEffect(() => { 
+        readFile()
+    }, [])
+
     const submitForm = () => {
         console.log("Form submitted")
-        // console.table({email: email, pwd: pwd})
-        console.log(`Email: ${email}, Pwd: ${pwd}`)
+        let good = false
+        accounts.forEach(e => {
+            if (e.email == email && e.pwd == pwd) {
+                good = true
+                e.connected = true
+                createFile(accounts)
+                navigation.navigate("Object")
+            }
+        })
+        if (!good) {
+            console.log("Wrong email or password, please retry")
+        }
     }
     
     const goToRegisterScreen = () => {

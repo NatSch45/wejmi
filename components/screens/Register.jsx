@@ -1,11 +1,12 @@
 import { Button, Input, View, Text, Stack, Icon, Link, IconButton } from "native-base";
 import { StyleSheet, LogBox } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MaterialIcons, FontAwesome5, Entypo } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system"
 
 LogBox.ignoreLogs(['NativeBase:']);
 
+const fileURI = FileSystem.documentDirectory + "accounts.json"
 
 const createFile = async (accounts) => {
 	await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(accounts))
@@ -27,17 +28,45 @@ export default ({navigation}) => {
     const [show1, setShow1] = useState(false);
     const togglePwdDisplay1 = () => setShow1(!show1);
 
-    const submitRegisterForm = () => {
+    const [accounts, setAccounts] = useState([]);
 
-        console.log("Form submitted")
-        // console.table({username: username, email: email, pwd: pwd, verifPwd: verifPwd})
-        if (pwd === verifPwd) {
-            console.log(`Username: ${username}, Email: ${email}, Pwd: ${pwd}, VerifPwd: ${verifPwd}`)
-        } else {
-            console.log("Passwords don't match")
+    const readFile = async () => {
+        if (await fileExists(fileURI)) {
+            const content = await FileSystem.readAsStringAsync(fileURI)
+            setAccounts(JSON.parse(content))
         }
-        
-        navigation.navigate("Log In")
+    }
+    useEffect(() => { 
+        readFile()
+    }, [])
+
+    const checkEmail = (newEmail) => {
+        let good = true
+        accounts.forEach(e => {
+            if (e.email == newEmail) {
+                console.log("WRONG EMAIL\n")
+                good = false;
+            }
+        })
+        return good;
+    }
+
+    const submitRegisterForm = () => {
+        console.log("Form submitted")
+        console.log(accounts + "\n")
+        if (pwd === verifPwd) {
+            if (checkEmail(email)) {
+                console.log(`Username: ${username}, Email: ${email}, Pwd: ${pwd}, VerifPwd: ${verifPwd}`)
+                const newAccounts = [...accounts, {username: username, email: email, pwd: pwd, connected: false}]
+                setAccounts(newAccounts)
+                createFile(newAccounts)
+                // navigation.navigate("Log In")
+            } else {
+                console.log("An account with this email already exists\n")
+            }
+        } else {
+            console.log("Passwords don't match\n")
+        }
     }
     
     const goToLogInScreen = () => {
@@ -49,6 +78,7 @@ export default ({navigation}) => {
         <View variant='container'>
             <Text fontSize='4xl' style={{marginBottom: 30}}>{"Wejmi".toUpperCase()}</Text>
             <Stack space={4} w="100%" alignItems="center">
+
                 <Input
                 InputLeftElement={<Icon as={<MaterialIcons name="person" />} size={5} ml="2" color="muted.400" />}
                 w={{base: '75%', md: '25%'}}
