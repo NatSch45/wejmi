@@ -1,4 +1,7 @@
 import * as ImagePicker from "expo-image-picker";
+import { View, Image, Text } from "react-native";
+import { useState } from "react";
+import MenuIcon from "./MenuIcon";
 
 export let openImage = async () => {
     let permissionResult =
@@ -9,23 +12,46 @@ export let openImage = async () => {
         return;
     }
     /* const display = setImage({}) */
-    /* display(pickerResult.uri); */
+
     let pickerResult = await ImagePicker.launchImageLibraryAsync();
+    paramsImage(pickerResult.uri);
     console.log(pickerResult);
 };
 
-/* export let display = (params) => {
-        const [image, setImage] = useState(null);
-    setImage({ localUri: params });
+let paramsImage = ({ params }) => {
+    const [image, setImage] = useState(null);
+    let result = params;
+    setImage({ localUri: result });
 
     if (image !== null) {
-        return (
-            <View>
-                <Image source={{ uri: image.localUri }} />
-            </View>
-        );
+        let result = image.localUri;
+        console.log(result);
+        return DisplayImage(result);
+        {
+            /* <View>
+            <Image source={{ uri: image.localUri }} />
+        </View>; */
+        }
     }
-}; */
+};
+
+export let Display = () => {
+    return (
+        <View>
+            <MenuIcon></MenuIcon>
+        </View>
+    );
+};
+
+export let DisplayImage = ({ params }) => {
+    return (
+        <View style={{ padding: 150 }}>
+            <Text>Salut</Text>
+            <Image source={{ uri: params }}></Image>
+            <MenuIcon></MenuIcon>
+        </View>
+    );
+};
 
 export let openCamera = async () => {
     let permissionResult = await ImagePicker.requestCameraPermissionsAsync();

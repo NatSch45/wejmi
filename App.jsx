@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Item from "./components/screens/Object.jsx";
 import { NativeBaseConfigProvider } from "native-base";
+import { DisplayImage } from "./components/ImagePicker.jsx";
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
@@ -14,9 +15,16 @@ export default function App() {
         <NativeBaseProvider>
             <NavigationContainer>
                 <Navigator>
-                    <Screen
+                    {/* <Screen
                         name="Ajouter ou modifier un objet"
                         component={Item}
+                        options={{
+                            headerStyle: { backgroundColor: "#1e90ff" },
+                        }}
+                    ></Screen> */}
+                    <Screen
+                        name="Image"
+                        component={DisplayImage}
                         options={{
                             headerStyle: { backgroundColor: "#1e90ff" },
                         }}
