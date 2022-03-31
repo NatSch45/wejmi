@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Item from "./components/screens/Object.jsx";
 import Register from "./components/screens/Register.jsx";
 import Login from "./components/screens/Login.jsx";
+import Index from "./components/screens/Index.jsx"
 import { extendTheme } from "native-base";
 
 const { Navigator, Screen } = createNativeStackNavigator();
@@ -16,6 +17,13 @@ export default function App() {
         <NativeBaseProvider theme={theme}>
             <NavigationContainer>
                 <Navigator>
+                    <Screen
+                        name="Index"
+                        component={Index}
+                        options={{
+                            headerStyle: { backgroundColor: "#1e90ff" },
+                        }}
+                    />
                     <Screen
                         name="Register"
                         component={Register}

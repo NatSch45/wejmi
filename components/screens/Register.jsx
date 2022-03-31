@@ -60,7 +60,7 @@ export default ({navigation}) => {
                 const newAccounts = [...accounts, {username: username, email: email, pwd: pwd, connected: false}]
                 setAccounts(newAccounts)
                 createFile(newAccounts)
-                // navigation.navigate("Log In")
+                navigation.navigate("Log In")
             } else {
                 console.log("An account with this email already exists\n")
             }

@@ -25,7 +25,7 @@ export default function Item() {
     return (
         <NativeBaseProvider>
             <ScrollView style={styles.container}>
-                <Stack marginBottom={10} space={1} alignItems="center" w="100%">
+                <Stack marginBottom={10} space={1} alignItems="center" w="100%" style={{marginTop: 10}}>
                     <Input
                         size="lg"
                         variant="underlined"
@@ -150,7 +150,6 @@ export default function Item() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 100,
     },
     form: {
         flex: 1,
