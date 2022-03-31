@@ -1,42 +1,21 @@
 import { Icon, IconButton, Stagger } from "native-base";
 import { useDisclose, HStack, Center } from "native-base";
-import { useState } from "react";
+
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
+
 import { openImage, openCamera } from "./ImagePicker.jsx";
 
-export default () => {
-    /* const [image, setImage] = useState(null);
-    const [cam, setCam] = useState(null);
-     */
-
-    /* let openImage = async () => {
-        let permissionResult =
-            await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-        if (permissionResult.granted === false) {
-            alert("Permission to access camera roll is required!");
-            return;
-        }
-
-        let pickerResult = await ImagePicker.launchImageLibraryAsync();
-        console.log(pickerResult);
-    }; */
-
-    /* let openCamera = async () => {
-        let permissionResult =
-            await ImagePicker.requestCameraPermissionsAsync();
-
-        if (permissionResult.granted === false) {
-            alert("Permission to access camera roll is required!");
-            return;
-        }
-
-        let pickerResult = await ImagePicker.launchCameraAsync();
-        console.log(pickerResult);
-    }; */
-
+export default ({ onImageChosen }) => {
     const { isOpen, onToggle } = useDisclose();
+
+    const openImagePicker = async () => {
+        let imageUri = await openImage();
+        onImageChosen(imageUri);
+    };
+    const openCameraPicker = async () => {
+        let imageUri = await openCamera();
+        onImageChosen(imageUri);
+    };
     return (
         <Center height={200} width={{ base: 100 }} style={{ marginTop: -170 }}>
             <Stagger
@@ -83,7 +62,7 @@ export default () => {
                             as={MaterialIcons}
                             size="6"
                             name="photo-library"
-                            onPress={openImage}
+                            onPress={openImagePicker}
                             _dark={{
                                 color: "warmGray.50",
                             }}
@@ -102,7 +81,7 @@ export default () => {
                             as={MaterialIcons}
                             size="6"
                             name="camera"
-                            onPress={openCamera}
+                            onPress={openCameraPicker}
                             _dark={{
                                 color: "warmGray.50",
                             }}
