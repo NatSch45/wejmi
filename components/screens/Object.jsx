@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Image } from "react-native";
 import {
     CheckIcon,
     FormControl,
@@ -8,7 +8,7 @@ import {
     TextArea,
     useTheme,
 } from "native-base";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     NativeBaseProvider,
     Input,
@@ -20,6 +20,17 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MenuIcon from "../MenuIcon.jsx";
 import Add from "../Button.jsx";
+import * as FileSystem from "expo-file-system";
+
+const fileURI = FileSystem.documentDirectory + "image.json";
+
+const createFile = async (form) => {
+    await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(form));
+};
+
+const fileExists = async (uri) => {
+    return (await FileSystem.getInfoAsync(uri)).exists;
+};
 
 export default function Item() {
     const { colors } = useTheme();
@@ -28,10 +39,39 @@ export default function Item() {
     const [room, setRoom] = useState("");
     const [furniture, setFurniture] = useState("");
     const [categorie, setCategorie] = useState("");
+    const [image, setImage] = useState("");
 
-    const display = () => {
-        let result = `Nom : ${name} | Description : ${desription} | Pièce : ${room} | Meuble : ${furniture} | Catégorie : ${categorie}`;
-        console.log(result);
+    const [form, setForm] = useState([]);
+
+    const readFile = async () => {
+        if (await fileExists(fileURI)) {
+            const content = await FileSystem.readAsStringAsync(fileURI);
+            setForm(JSON.parse(content));
+            console.log(JSON.parse(content));
+        }
+    };
+    useEffect(() => {
+        readFile();
+    }, []);
+
+    const saveForm = async () => {
+        console.log("Saving form");
+        console.log(
+            `Nom : ${name} | Description : ${desription} | Pièce : ${room} | Meuble : ${furniture} | Catégorie : ${categorie} | Image : ${image}`
+        );
+        const newForm = [
+            ...form,
+            {
+                Nom: name,
+                Description: desription,
+                Pièce: room,
+                Meuble: furniture,
+                Catégorie: categorie,
+                Image: image,
+            },
+        ];
+        setForm(newForm);
+        createFile(newForm);
     };
 
     return (
@@ -45,9 +85,16 @@ export default function Item() {
                     <Stack
                         marginBottom={10}
                         space={1}
+                        style={{ marginTop: 10 }}
                         alignItems="center"
                         w="100%"
                     >
+                        {image != "" && (
+                            <Image
+                                source={{ uri: image }}
+                                style={styles.image}
+                            ></Image>
+                        )}
                         <Input
                             size="lg"
                             variant="underlined"
@@ -190,9 +237,9 @@ export default function Item() {
                                 />
                             </Select>
                         </FormControl>
-                        <Add action={display}></Add>
+                        <Add action={saveForm}></Add>
                     </Stack>
-                    <MenuIcon></MenuIcon>
+                    <MenuIcon onImageChosen={setImage}></MenuIcon>
                 </ScrollView>
             </KeyboardAvoidingView>
         </NativeBaseProvider>
@@ -202,7 +249,6 @@ export default function Item() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 100,
     },
     form: {
         flex: 1,
@@ -215,5 +261,11 @@ const styles = StyleSheet.create({
     },
     button: {
         flex: 1,
+    },
+    image: {
+        paddingTop: 15,
+        width: 100,
+        height: 100,
+        borderRadius: 50,
     },
 });
