@@ -1,25 +1,24 @@
-import { Fab, Icon, Box, Center, NativeBaseProvider, View } from "native-base";
-import React from "react";
+import {useState} from "react";
+import { View, ScrollView, Center, Box, Fab, Icon } from "native-base";
+import { useTheme } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 
 export default () => {
 
   const Add = () => {
     return <Center>
-      <Fab renderInPortal={false} shadow={2} size="sm" icon={<Icon color="white" as={AntDesign} name="plus" size="sm" />} />
-    </Center>;
-  };
-
-  function Example() {
-    const theme = useTheme();
-    return <Box>{/* Do something with the theme */}</Box>;
+          <Fab renderInPortal={true} shadow={2} size="sm" icon={<Icon color="white" as={AntDesign} name="plus" size="sm" />} />
+      </Center>;
   };
 
   return (
-    <NativeBaseProvider>
-      <Center flex={1} px="3">
-        <Add />
-      </Center>
-    </NativeBaseProvider>
-  );
+    <View>
+      <ScrollView>
+
+      </ScrollView>
+        <Center flex={1} px="3">
+          <Add />
+        </Center>
+    </View>
+    )
 };
