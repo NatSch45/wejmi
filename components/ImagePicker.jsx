@@ -18,10 +18,9 @@ export let openImage = async () => {
     console.log(pickerResult);
 };
 
-let paramsImage = ({ params }) => {
+let paramsImage = (params) => {
     const [image, setImage] = useState(null);
-    let result = params;
-    setImage({ localUri: result });
+    setImage({ localUri: params });
 
     if (image !== null) {
         let result = image.localUri;

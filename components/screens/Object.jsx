@@ -39,7 +39,7 @@ export default function Item() {
             <KeyboardAvoidingView
                 style={{ flex: 1 }}
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
-                keyboardVerticalOffset={60}
+                // keyboardVerticalOffset={60}
             >
                 <ScrollView style={styles.container}>
                     <Stack
@@ -47,6 +47,7 @@ export default function Item() {
                         space={1}
                         alignItems="center"
                         w="100%"
+                        style={{marginTop: 10}}
                     >
                         <Input
                             size="lg"
@@ -202,7 +203,6 @@ export default function Item() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 100,
     },
     form: {
         flex: 1,

@@ -15,13 +15,13 @@ export default function App() {
         <NativeBaseProvider>
             <NavigationContainer>
                 <Navigator>
-                    {/* <Screen
+                    <Screen
                         name="Ajouter ou modifier un objet"
                         component={Item}
                         options={{
                             headerStyle: { backgroundColor: "#1e90ff" },
                         }}
-                    ></Screen> */}
+                    ></Screen>
                     <Screen
                         name="Image"
                         component={DisplayImage}
