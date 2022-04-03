@@ -170,7 +170,9 @@ export default ({ navigation }) => {
                                         size={7}
                                     />
                                 }
-                                _icon={{ color: show ? "#06b5d4" : "#919191" }}
+                                _icon={{
+                                    color: show ? "#06b5d4" : "#919191",
+                                }}
                             />
                         }
                     />
@@ -204,7 +206,9 @@ export default ({ navigation }) => {
                                         size={7}
                                     />
                                 }
-                                _icon={{ color: show1 ? "#06b5d4" : "#919191" }}
+                                _icon={{
+                                    color: show1 ? "#06b5d4" : "#919191",
+                                }}
                             />
                         }
                     />

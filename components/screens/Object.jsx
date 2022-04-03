@@ -91,7 +91,9 @@ export default function Item() {
                     >
                         {image != "" && (
                             <Image
-                                source={{ uri: image }}
+                                source={{
+                                    uri: image,
+                                }}
                                 style={styles.image}
                             ></Image>
                         )}
