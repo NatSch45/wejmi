@@ -16,6 +16,7 @@ export default ({ onImageChosen }) => {
         let imageUri = await openCamera();
         onImageChosen(imageUri);
     };
+
     return (
         <Center height={200} width={{ base: 100 }} style={{ marginTop: -170 }}>
             <Stagger
