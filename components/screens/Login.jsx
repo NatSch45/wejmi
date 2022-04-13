@@ -54,10 +54,11 @@ export default ({ navigation }) => {
                 good = true;
                 e.connected = true;
                 createFile(accounts);
-                navigation.navigate("Object");
+                navigation.navigate("Ajouter un objet");
             }
         });
         if (!good) {
+            alert("Veillez remplir tous les champs !");
             console.log("Wrong email or password, please retry");
         }
     };

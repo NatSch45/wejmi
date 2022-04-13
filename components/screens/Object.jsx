@@ -7,16 +7,12 @@ import {
     Select,
     TextArea,
     useTheme,
-} from "native-base";
-import { useState, useEffect } from "react";
-import {
-    NativeBaseProvider,
-    Input,
-    Button,
-    View,
     Stack,
     KeyboardAvoidingView,
+    NativeBaseProvider,
+    Input,
 } from "native-base";
+import { useState, useEffect } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MenuIcon from "../MenuIcon.jsx";
 import Add from "../Button.jsx";
@@ -32,7 +28,7 @@ const fileExists = async (uri) => {
     return (await FileSystem.getInfoAsync(uri)).exists;
 };
 
-export default function Item() {
+export default function Item({ navigation }) {
     const { colors } = useTheme();
     const [name, setName] = useState("");
     const [desription, setDescription] = useState("");
@@ -47,7 +43,7 @@ export default function Item() {
         if (await fileExists(fileURI)) {
             const content = await FileSystem.readAsStringAsync(fileURI);
             setForm(JSON.parse(content));
-            console.log(JSON.parse(content));
+            /* console.log(JSON.parse(content)); */
         }
     };
     useEffect(() => {
@@ -55,24 +51,96 @@ export default function Item() {
     }, []);
 
     const saveForm = async () => {
-        console.log("Saving form");
+        if (
+            name != "" &&
+            desription != "" &&
+            room != "" &&
+            furniture != "" &&
+            categorie != ""
+        ) {
+            if (image != "") {
+                const newForm = [
+                    ...form,
+                    {
+                        Nom: name,
+                        Description: desription,
+                        Pièce: room,
+                        Meuble: furniture,
+                        Catégorie: categorie,
+                        Image: image,
+                    },
+                ];
+                setForm(newForm);
+                createFile(newForm);
+            } else {
+                alert("Veuillez ajouter une image !");
+            }
+        } else {
+            alert("Veuillez remplir tous les champs !");
+        }
+        /* console.log("Saving form");
         console.log(
             `Nom : ${name} | Description : ${desription} | Pièce : ${room} | Meuble : ${furniture} | Catégorie : ${categorie} | Image : ${image}`
-        );
-        const newForm = [
-            ...form,
-            {
-                Nom: name,
-                Description: desription,
-                Pièce: room,
-                Meuble: furniture,
-                Catégorie: categorie,
-                Image: image,
-            },
-        ];
-        setForm(newForm);
-        createFile(newForm);
+        ); */
     };
+
+    const goToAddSomething = ({ nom }) => {
+        navigation.navigate("Ajouter une option", { nom });
+    };
+
+    const listRoom = [
+        {
+            id: 1,
+            label: "Chambre",
+            value: "Chambre",
+        },
+        {
+            id: 2,
+            label: "Cuisine",
+            value: "Cuisine",
+        },
+        {
+            id: 3,
+            label: "Salle de bain",
+            value: "Salle de bain",
+        },
+        {
+            id: 4,
+            label: "Salle à manger",
+            value: "Salle à manger",
+        },
+        {
+            id: 5,
+            label: "Jardin",
+            value: "Jardin",
+        },
+    ];
+
+    const listFurniture = [
+        {
+            id: 1,
+            label: "Armoire",
+            value: "Armoire",
+        },
+        {
+            id: 2,
+            label: "Placard",
+            value: "Placard",
+        },
+    ];
+
+    const listCategorie = [
+        {
+            id: 1,
+            label: "Outil",
+            value: "Outil",
+        },
+        {
+            id: 2,
+            label: "Documents",
+            value: "Documents",
+        },
+    ];
 
     return (
         <NativeBaseProvider>
@@ -85,7 +153,9 @@ export default function Item() {
                     <Stack
                         marginBottom={10}
                         space={1}
-                        style={{ marginTop: 10 }}
+                        style={
+                            image == "" ? { marginTop: 70 } : { marginTop: 10 }
+                        }
                         alignItems="center"
                         w="100%"
                     >
@@ -98,7 +168,7 @@ export default function Item() {
                             ></Image>
                         )}
                         <Input
-                            size="lg"
+                            size="xl"
                             variant="underlined"
                             placeholder="Nom"
                             borderColor="blue.400"
@@ -114,6 +184,7 @@ export default function Item() {
                             w="3/4"
                             maxW="300"
                             style={styles.spaceBetween}
+                            isRequired
                         >
                             <FormControl.Label>
                                 Compartiment :
@@ -157,23 +228,33 @@ export default function Item() {
                                 }}
                                 mt="1"
                             >
-                                <Select.Item label="Cuisine" value="Cuisine" />
+                                {listRoom.map((item) => (
+                                    <Select.Item
+                                        key={item.id}
+                                        label={item.label}
+                                        value={item.value}
+                                    />
+                                ))}
                                 <Select.Item
-                                    label="Salle à manger"
-                                    value="Salle à manger"
+                                    label="Ajouter une pièce..."
+                                    value="Ajouter une pièce..."
+                                    borderRadius="md"
+                                    borderWidth="1"
+                                    borderColor="#00AFC1"
+                                    bgColor="#00AFC1"
+                                    onPress={() =>
+                                        goToAddSomething({
+                                            nom: "Ajouter une pièce :",
+                                        })
+                                    }
                                 />
-                                <Select.Item
-                                    label="Salle de bain"
-                                    value="Salle de bain"
-                                />
-                                <Select.Item label="Chambre" value="Chambre" />
-                                <Select.Item label="Jardin" value="Jardin" />
                             </Select>
                         </FormControl>
                         <FormControl
                             w="3/4"
                             maxW="300"
                             style={styles.spaceBetween}
+                            isRequired
                         >
                             <FormControl.Label>Meuble :</FormControl.Label>
                             <Select
@@ -199,14 +280,33 @@ export default function Item() {
                                 }}
                                 mt="1"
                             >
-                                <Select.Item label="Armoire" value="Armoire" />
-                                <Select.Item label="Placard" value="Placard" />
+                                {listFurniture.map((item) => (
+                                    <Select.Item
+                                        key={item.id}
+                                        label={item.label}
+                                        value={item.value}
+                                    />
+                                ))}
+                                <Select.Item
+                                    label="Ajouter un meuble..."
+                                    value="Ajouter un meuble..."
+                                    borderRadius="md"
+                                    borderWidth="1"
+                                    borderColor="#00AFC1"
+                                    bgColor="#00AFC1"
+                                    onPress={() =>
+                                        goToAddSomething({
+                                            nom: "Ajouter un meuble :",
+                                        })
+                                    }
+                                />
                             </Select>
                         </FormControl>
                         <FormControl
                             w="3/4"
                             maxW="300"
                             style={styles.spaceBetween}
+                            isRequired
                         >
                             <FormControl.Label>Catégorie :</FormControl.Label>
                             <Select
@@ -224,18 +324,33 @@ export default function Item() {
                                         }}
                                     />
                                 }
-                                accessibilityLabel="Choisir le meuble"
-                                placeholder="Choisir le meuble"
+                                accessibilityLabel="Choisir la catégorie"
+                                placeholder="Choisir la catégorie"
                                 _selectedItem={{
                                     bg: "teal.600",
                                     endIcon: <CheckIcon size={5} />,
                                 }}
                                 mt="1"
                             >
-                                <Select.Item label="Outil" value="Outil" />
+                                {listCategorie.map((item) => (
+                                    <Select.Item
+                                        key={item.id}
+                                        label={item.label}
+                                        value={item.value}
+                                    />
+                                ))}
                                 <Select.Item
-                                    label="Documents"
-                                    value="Documents"
+                                    label="Ajouter une catégorie..."
+                                    value="Ajouter une catégorie..."
+                                    borderRadius="md"
+                                    borderWidth="1"
+                                    borderColor="#00AFC1"
+                                    bgColor="#00AFC1"
+                                    onPress={() =>
+                                        goToAddSomething({
+                                            nom: "Ajouter une catégorie :",
+                                        })
+                                    }
                                 />
                             </Select>
                         </FormControl>
@@ -269,5 +384,8 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 50,
+    },
+    text: {
+        fontSize: 20,
     },
 });
