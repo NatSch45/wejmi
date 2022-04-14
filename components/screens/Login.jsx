@@ -2,20 +2,40 @@ import { Button, Input, Stack, View, Link, Icon, Text, IconButton } from "native
 import { StyleSheet, LogBox } from "react-native";
 import { useEffect, useState } from "react";
 import { FontAwesome5, Entypo } from "@expo/vector-icons";
-import * as FileSystem from "expo-file-system"
+import * as SQLite from 'expo-sqlite';
 
 LogBox.ignoreLogs(['NativeBase:']);
 
-const fileURI = FileSystem.documentDirectory + "accounts.json"
+const db = SQLite.openDatabase("myDB.db")
 
-const createFile = async (accounts) => {
-	await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(accounts))
-    // console.log(await FileSystem.getInfoAsync(fileURI))
+db.transaction((tx) => {
+    tx.executeSql("CREATE TABLE IF NOT EXISTS Accounts (ID INTEGER PRIMARY KEY NOT NULL, Username TEXT, Email TEXT, Password TEXT, Connected BOOLEAN);")
+})
+
+const getAllAccounts = async () => {
+    return new Promise(async resolve => {
+        db.transaction((tx) => {
+            tx.executeSql("SELECT * FROM Accounts", [], (insertID, rows) => {
+                const allAccounts = rows.rows._array
+                resolve(allAccounts)
+            })
+        })
+    })
 }
 
-const fileExists = async (uri) => {
-    return (await FileSystem.getInfoAsync(uri)).exists
+const connectAccount = (accountID, connected) => {
+    db.transaction((tx) => {
+        tx.executeSql("UPDATE Accounts SET connected = ? WHERE id = ?", [connected, accountID])
+    })
 }
+
+const disconnectUsers = () => {
+    db.transaction((tx) => {
+        tx.executeSql("UPDATE Accounts SET connect = ?", [false])
+    })
+}
+
+disconnectUsers()
 
 export default ({navigation}) => {
     const [email, setEmail] = useState("");
@@ -26,28 +46,27 @@ export default ({navigation}) => {
 
     const [accounts, setAccounts] = useState([]);
 
-    const readFile = async () => {
-        if (await fileExists(fileURI)) {
-            const content = await FileSystem.readAsStringAsync(fileURI)
-            setAccounts(JSON.parse(content))
-        }
+    const saveAccounts = async () => {
+        let allAccounts = await getAllAccounts()
+        console.log("\nallAccounts --> " + JSON.stringify(allAccounts))
+        setAccounts(allAccounts)
     }
-    useEffect(() => { 
-        readFile()
+    useEffect(() => {
+        saveAccounts()
     }, [])
 
-    const submitForm = () => {
-        console.log("Form submitted")
+    const submitLoginForm = () => {
         let good = false
         accounts.forEach(e => {
-            if (e.email == email && e.pwd == pwd) {
+            if (e.Email == email && e.Password == pwd) {
                 good = true
-                e.connected = true
-                createFile(accounts)
+                connectAccount(e.ID, true)
+                saveAccounts()
                 navigation.navigate("Object")
             }
         })
         if (!good) {
+            alert("Mauvais email ou mot de passe, réessayez !")
             console.log("Wrong email or password, please retry")
         }
     }
@@ -81,7 +100,7 @@ export default ({navigation}) => {
                     <IconButton h='full' roundedLeft={0} onPress={togglePwdDisplay} icon={<Icon as={Entypo} name={show ? "eye" : "eye-with-line"} size={7} />} _icon={{color: show ? '#06b5d4' : '#919191'}} />
                 }/>
 
-                <Button w='150' h='10' variant='outline' onPress={submitForm}>Log in</Button>
+                <Button w='150' h='10' variant='outline' onPress={submitLoginForm}>Log in</Button>
                 <Text variant='subText'>Haven't an account yet ?</Text><Link onPress={goToRegisterScreen}>Create one</Link>
             </Stack>
         </View>

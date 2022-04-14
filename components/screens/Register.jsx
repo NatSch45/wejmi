@@ -20,15 +20,28 @@ const insertNewAccount = (Username, Email, Password) => {
     })
 }
 
-const getAllAccounts = () => {
-    db.transaction((tx) => {
-        tx.executeSql("SELECT * FROM Accounts", [], (insertID, rows) => {
-            console.log("\ninsertID :  " + JSON.stringify(insertID) + "\nrows : " + JSON.stringify(rows))
+const getAllAccounts = async () => {
+    return new Promise(async resolve => {
+        db.transaction((tx) => {
+            tx.executeSql("SELECT * FROM Accounts", [], (insertID, rows) => {
+                const allAccounts = rows.rows._array
+                resolve(allAccounts)
+            })
         })
     })
 }
 
-// LogBox.ignoreLogs(['NativeBase:']);
+const deleteAllAccounts = () => {
+    db.transaction((tx) => {
+        tx.executeSql("DELETE FROM Accounts")
+    })
+}
+const deleteAccount = (id) => {
+    db.transaction((tx) => {
+        tx.executeSql("DELETE FROM Accounts WHERE ID = ?", [id])
+    })
+}
+
 
 export default ({navigation}) => {
     const [username, setUsername] = useState("");
@@ -43,8 +56,9 @@ export default ({navigation}) => {
 
     const [accounts, setAccounts] = useState([]);
 
-    const saveAccounts = () => {
-        let allAccounts = getAllAccounts()
+    const saveAccounts = async () => {
+        let allAccounts = await getAllAccounts()
+        console.log("\nallAccounts --> " + JSON.stringify(allAccounts))
         setAccounts(allAccounts)
     }
     useEffect(() => {
@@ -65,7 +79,7 @@ export default ({navigation}) => {
         return good;
     }
 
-    const submitRegisterForm = () => {
+    const submitRegisterForm = async () => {
         console.log("Form submitted")
         if (pwd === verifPwd) {
             if (checkEmail(email)) {
