@@ -58,7 +58,7 @@ export default ({ navigation }) => {
             }
         });
         if (!good) {
-            alert("Veillez remplir tous les champs !");
+            alert("Mauvais email ou mot de passe !");
             console.log("Wrong email or password, please retry");
         }
     };
