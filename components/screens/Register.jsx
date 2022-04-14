@@ -2,20 +2,33 @@ import { Button, Input, View, Text, Stack, Icon, Link, IconButton } from "native
 import { StyleSheet, LogBox } from "react-native";
 import { useEffect, useState } from "react";
 import { MaterialIcons, FontAwesome5, Entypo } from "@expo/vector-icons";
-import * as FileSystem from "expo-file-system"
+import * as SQLite from 'expo-sqlite';
 
-LogBox.ignoreLogs(['NativeBase:']);
+const db = SQLite.openDatabase("myDB.db");
 
-const fileURI = FileSystem.documentDirectory + "accounts.json"
+db.transaction((tx) => {
+    tx.executeSql("CREATE TABLE IF NOT EXISTS Accounts (ID INTEGER PRIMARY KEY NOT NULL, Username TEXT, Email TEXT, Password TEXT, Connected BOOLEAN);")
+})
 
-const createFile = async (accounts) => {
-	await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(accounts))
-    // console.log(await FileSystem.getInfoAsync(fileURI))
+const insertNewAccount = (Username, Email, Password) => {
+    db.transaction((tx) => {
+        tx.executeSql("INSERT INTO Accounts (Username, Email, Password, Connected) VALUES (?, ?, ?, ?)", [Username, Email, Password, true], (_, result) => {
+            console.log("Result: " + JSON.stringify(result.insertId))
+        }, (_, error) => {
+            console.log("Error: " + JSON.stringify(error.message))
+        })
+    })
 }
 
-const fileExists = async (uri) => {
-    return (await FileSystem.getInfoAsync(uri)).exists
+const getAllAccounts = () => {
+    db.transaction((tx) => {
+        tx.executeSql("SELECT * FROM Accounts", [], (insertID, rows) => {
+            console.log("\ninsertID :  " + JSON.stringify(insertID) + "\nrows : " + JSON.stringify(rows))
+        })
+    })
 }
+
+// LogBox.ignoreLogs(['NativeBase:']);
 
 export default ({navigation}) => {
     const [username, setUsername] = useState("");
@@ -30,36 +43,36 @@ export default ({navigation}) => {
 
     const [accounts, setAccounts] = useState([]);
 
-    const readFile = async () => {
-        if (await fileExists(fileURI)) {
-            const content = await FileSystem.readAsStringAsync(fileURI)
-            setAccounts(JSON.parse(content))
-        }
+    const saveAccounts = () => {
+        let allAccounts = getAllAccounts()
+        setAccounts(allAccounts)
     }
-    useEffect(() => { 
-        readFile()
+    useEffect(() => {
+        saveAccounts()
     }, [])
 
     const checkEmail = (newEmail) => {
         let good = true
-        accounts.forEach(e => {
-            if (e.email == newEmail) {
-                console.log("WRONG EMAIL\n")
-                good = false;
-            }
-        })
+        if (accounts !== undefined) {
+            accounts.forEach(e => {
+                if (e.email == newEmail) {
+                    console.log("WRONG EMAIL\n")
+                    good = false;
+                }
+            })
+        }
+
         return good;
     }
 
     const submitRegisterForm = () => {
         console.log("Form submitted")
-        console.log(accounts + "\n")
         if (pwd === verifPwd) {
             if (checkEmail(email)) {
                 console.log(`Username: ${username}, Email: ${email}, Pwd: ${pwd}, VerifPwd: ${verifPwd}`)
-                const newAccounts = [...accounts, {username: username, email: email, pwd: pwd, connected: false}]
-                setAccounts(newAccounts)
-                createFile(newAccounts)
+                insertNewAccount(username, email, pwd)
+                saveAccounts()
+                console.log(accounts + "\n")
                 navigation.navigate("Log In")
             } else {
                 console.log("An account with this email already exists\n")
@@ -125,9 +138,3 @@ export default ({navigation}) => {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    eyeIcon: {
-        color: '#919191'
-    }
-})
