@@ -8,6 +8,8 @@ import Register from "./components/screens/Register.jsx";
 import Login from "./components/screens/Login.jsx";
 import Index from "./components/screens/Index.jsx";
 import AddSomething from "./components/screens/AddSomething.jsx";
+import Directory from "./components/screens/Directory.jsx";
+import Preview from "./components/screens/Preview.jsx";
 import { extendTheme } from "native-base";
 
 const { Navigator, Screen } = createNativeStackNavigator();
@@ -54,6 +56,20 @@ export default function App() {
                                 title: route.params.nom,
                                 headerStyle: { backgroundColor: "#1e90ff" },
                             };
+                        }}
+                    />
+                    <Screen
+                        name="Annuaires"
+                        component={Directory}
+                        options={{
+                            headerStyle: { backgroundColor: "#1e90ff" },
+                        }}
+                    />
+                    <Screen
+                        name="Détail"
+                        component={Preview}
+                        options={{
+                            headerStyle: { backgroundColor: "#1e90ff" },
                         }}
                     />
                 </Navigator>

@@ -54,7 +54,7 @@ export default ({ navigation }) => {
                 good = true;
                 e.connected = true;
                 createFile(accounts);
-                navigation.navigate("Ajouter un objet");
+                navigation.navigate("Annuaires");
             }
         });
         if (!good) {
