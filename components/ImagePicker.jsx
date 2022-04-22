@@ -1,4 +1,5 @@
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
 
 export let openImage = async () => {
     let permissionResult =
@@ -10,7 +11,8 @@ export let openImage = async () => {
     }
 
     let pickerResult = await ImagePicker.launchImageLibraryAsync();
-    return pickerResult.uri;
+    let imageResult = await copyFile(pickerResult);
+    return imageResult;
 };
 
 export let openCamera = async () => {
@@ -22,5 +24,20 @@ export let openCamera = async () => {
     }
 
     let pickerResult = await ImagePicker.launchCameraAsync();
-    return pickerResult.uri;
+    let imageResult = await copyFile(pickerResult);
+    return imageResult;
+};
+
+const copyFile = async (image) => {
+    let fileName = image.uri.substring(
+        image.uri.lastIndexOf("/") + 1,
+        image.uri.length
+    );
+    const uri = `${FileSystem.documentDirectory}${fileName}`;
+
+    await FileSystem.copyAsync({
+        from: image.uri,
+        to: uri,
+    });
+    return uri;
 };
