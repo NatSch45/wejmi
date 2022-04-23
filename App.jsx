@@ -8,6 +8,7 @@ import Register from "./components/screens/Register.jsx";
 import Login from "./components/screens/Login.jsx";
 import Index from "./components/screens/Index.jsx";
 import AddSomething from "./components/screens/AddSomething.jsx";
+import Modify from "./components/screens/Modify.jsx";
 import { extendTheme } from "native-base";
 
 const { Navigator, Screen } = createNativeStackNavigator();
@@ -18,35 +19,42 @@ export default function App() {
         <NativeBaseProvider theme={theme}>
             <NavigationContainer>
                 <Navigator>
-                    <Screen
+                    {/*<Screen
                         name="Index"
                         component={Index}
                         options={{
                             headerStyle: { backgroundColor: "#1e90ff" },
                         }}
-                    />
-                    <Screen
+                    />*/}
+                    {/*<Screen
                         name="Register"
                         component={Register}
                         options={{
                             headerStyle: { backgroundColor: "#1e90ff" },
                         }}
-                    />
-                    <Screen
+                    />*/}
+                    {/*<Screen
                         name="Log In"
                         component={Login}
                         options={{
                             headerStyle: { backgroundColor: "#1e90ff" },
                         }}
-                    />
-                    <Screen
+                    />*/}
+                    {/*<Screen
                         name="Ajouter un objet"
                         component={Item}
                         options={{
                             headerStyle: { backgroundColor: "#1e90ff" },
                         }}
-                    />
+                    />*/}
                     <Screen
+                        name="Modifier un objet"
+                        component={Modify}
+                        options={{
+                            headerStyle: { backgroundColor: "#1e90ff" },
+                        }}
+                    />
+                    {/*<Screen
                         name="Ajouter une option"
                         component={AddSomething}
                         options={({ route }) => {
@@ -55,7 +63,7 @@ export default function App() {
                                 headerStyle: { backgroundColor: "#1e90ff" },
                             };
                         }}
-                    />
+                    />*/}
                 </Navigator>
             </NavigationContainer>
             <StatusBar style="auto" />
