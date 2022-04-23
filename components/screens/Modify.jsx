@@ -14,35 +14,34 @@ import {
 } from "native-base";
 import { useState, useEffect } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import MenuIcon from "../MenuIcon.jsx";
-import Add from "../Buttons.jsx";
+import Add from "../SaveButton.jsx";
 import * as FileSystem from "expo-file-system";
 
 const fileURI = FileSystem.documentDirectory + "image.json";
 
-const createFile = async (form) => {
-    await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(form));
-};
+//const createFile = async (form) => {
+    //await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(form));
+//};
 
 const fileExists = async (uri) => {
     return (await FileSystem.getInfoAsync(uri)).exists;
 };
 
 export default function Item({ navigation }) {
-    const { colors } = useTheme();
+    //const { colors } = useTheme();
     const [name, setName] = useState("");
     const [desription, setDescription] = useState("");
     const [room, setRoom] = useState("");
     const [furniture, setFurniture] = useState("");
     const [categorie, setCategorie] = useState("");
-    const [image, setImage] = useState("");
+    const [image] = useState("");
 
     const [form, setForm] = useState([]);
 
     const readFile = async () => {
         if (await fileExists(fileURI)) {
             const content = await FileSystem.readAsStringAsync(fileURI);
-            setForm(JSON.parse(content));
+            saveForm(JSON.parse(content));
             /* console.log(JSON.parse(content)); */
         }
     };
@@ -59,7 +58,7 @@ export default function Item({ navigation }) {
             categorie != ""
         ) {
             if (image != "") {
-                const newForm = [
+                const saveForm = [
                     ...form,
                     {
                         Nom: name,
@@ -70,8 +69,7 @@ export default function Item({ navigation }) {
                         Image: image,
                     },
                 ];
-                setForm(newForm);
-                createFile(newForm);
+                saveForm(setForm);
             } else {
                 alert("Veuillez ajouter une image !");
             }

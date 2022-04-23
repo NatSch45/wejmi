@@ -1,11 +1,11 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Button, View } from "native-base";
+import { Button } from "native-base";
 
 export default ({ action }) => {
     return (
         <Button style={styles.space} onPress={action}>
-            Modifier
+            Sauvegarder
         </Button>
     );
 };
