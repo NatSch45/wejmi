@@ -67,13 +67,17 @@ export default ({navigation}) => {
     const [accounts, setAccounts] = useState([]);
 
     const saveAccounts = async () => {
-        let allAccounts = await getAllAccounts()
-        console.log("\nallAccounts --> " + JSON.stringify(allAccounts))
-        setAccounts(allAccounts)
+        let allAccounts = await getAllAccounts();
+        console.log("\nallAccounts --> " + JSON.stringify(allAccounts));
+        return allAccounts;
     }
     useEffect(() => {
-        saveAccounts()
-    }, [])
+        let isMounted = true;
+        saveAccounts().then(allAccounts => {
+            if (isMounted) setAccounts(allAccounts);
+        });
+        return () => { isMounted = false }
+    }, []);
 
     const checkEmail = (newEmail) => {
         let good = true
@@ -138,6 +142,7 @@ export default ({navigation}) => {
                         onChangeText={(val) => {
                             setUsername(val);
                         }}
+                        autoCapitalize="none"
                     />
 
                     <Input
@@ -156,6 +161,8 @@ export default ({navigation}) => {
                         onChangeText={(val) => {
                             setEmail(val);
                         }}
+                        autoCapitalize="none"
+                        keyboardType="email-address"
                     />
 
                     <Input

@@ -55,24 +55,22 @@ export default function ({ navigation }) {
         navigation.navigate("Détail", { item });
     };
 
-    const Example = () => {
+    const AddObject = () => {
         return (
             <Center paddingRight={10} paddingBottom={5}>
-                <Box height="200" w="400" shadow="2" rounded="lg">
-                    <Fab
-                        renderInPortal={false}
-                        size="sm"
-                        onPress={goToAddObject}
-                        icon={
-                            <Icon
-                                color="white"
-                                as={MaterialIcons}
-                                name="add"
-                                size="sm"
-                            />
-                        }
-                    />
-                </Box>
+                <Fab
+                    renderInPortal={false}
+                    size="sm"
+                    onPress={goToAddObject}
+                    icon={
+                        <Icon
+                            color="white"
+                            as={MaterialIcons}
+                            name="add"
+                            size="sm"
+                        />
+                    }
+                />
             </Center>
         );
     };
@@ -148,7 +146,7 @@ export default function ({ navigation }) {
                         ))}
                     </Stack>
                 </ScrollView>
-                <Example></Example>
+                <AddObject></AddObject>
             </KeyboardAvoidingView>
         </NativeBaseProvider>
     );

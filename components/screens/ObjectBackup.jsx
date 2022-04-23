@@ -6,6 +6,7 @@ import {
     ScrollView,
     Select,
     TextArea,
+    useTheme,
     Stack,
     KeyboardAvoidingView,
     NativeBaseProvider,
@@ -15,78 +16,132 @@ import { useState, useEffect } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MenuIcon from "../MenuIcon.jsx";
 import Add from "../Button.jsx";
+import * as FileSystem from "expo-file-system";
 import * as Crud from "../Crud.jsx"
 
-Crud.createRoomsTable();
-Crud.createFurnituresTable();
-Crud.createCategoriesTable();
+const fileURI = FileSystem.documentDirectory + "image.json";
 
-export default function Item({ route, navigation }) {
-    const routeData = route.params;
+const createFile = async (form) => {
+    await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(form));
+};
 
-    //* Form data
+const fileExists = async (uri) => {
+    return (await FileSystem.getInfoAsync(uri)).exists;
+};
+
+export default function Item({ navigation }) {
+    const { colors } = useTheme();
     const [name, setName] = useState("");
     const [desription, setDescription] = useState("");
     const [room, setRoom] = useState("");
     const [furniture, setFurniture] = useState("");
-    const [category, setCategory] = useState("");
+    const [categorie, setCategorie] = useState("");
     const [image, setImage] = useState("");
 
-    const [rooms, setRooms] = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [furnitures, setFurnitures] = useState([]);
+    const [form, setForm] = useState([]);
 
-    const saveLists = async () => {
-        const allRooms = await Crud.getRooms();
-        const allCategories = await Crud.getCategories();
-        const allFurnitures = await Crud.getFurnitures();
-        return [allRooms, allCategories, allFurnitures];
-    }
+    const readFile = async () => {
+        if (await fileExists(fileURI)) {
+            const content = await FileSystem.readAsStringAsync(fileURI);
+            setForm(JSON.parse(content));
+            /* console.log(JSON.parse(content)); */
+        }
+    };
     useEffect(() => {
-        let isMounted = true;
-        saveLists().then(lists => {
-            if (isMounted) {
-                setRooms(lists[0]);
-                setCategories(lists[1]);
-                setFurnitures(lists[2]);
-            }
-        });
-        return () => { isMounted = false }
+        readFile();
     }, []);
 
-    const submitNewObjectForm = async () => {
+    const saveForm = async () => {
         if (
             name != "" &&
             desription != "" &&
             room != "" &&
             furniture != "" &&
-            category != ""
+            categorie != ""
         ) {
             if (image != "") {
-                Crud.insertNewObject(name, description, room, furniture, category, image);
-                navigation.navigate("Annuaires");
+                const newForm = [
+                    ...form,
+                    {
+                        Nom: name,
+                        Description: desription,
+                        Pièce: room,
+                        Meuble: furniture,
+                        Catégorie: categorie,
+                        Image: image,
+                    },
+                ];
+                setForm(newForm);
+                createFile(newForm);
             } else {
                 alert("Veuillez ajouter une image !");
             }
         } else {
             alert("Veuillez remplir tous les champs !");
         }
+        /* console.log("Saving form");
+        console.log(
+            `Nom : ${name} | Description : ${desription} | Pièce : ${room} | Meuble : ${furniture} | Catégorie : ${categorie} | Image : ${image}`
+        ); */
     };
 
-    const goToAddSomething = ({ nom, elem }) => {
-        navigation.navigate("Ajouter une option", { nom, elem });
+    const goToAddSomething = ({ nom }) => {
+        navigation.navigate("Ajouter une option", { nom });
     };
 
-    if (routeData != undefined) {
-        if (routeData.updateData) {
-            saveLists().then(lists => {
-                setRooms(lists[0]);
-                setCategories(lists[1]);
-                setFurnitures(lists[2]);
-            });
-            routeData.updateData = false;
-        }
-    }
+    const listRoom = [
+        {
+            id: 1,
+            label: "Chambre",
+            value: "Chambre",
+        },
+        {
+            id: 2,
+            label: "Cuisine",
+            value: "Cuisine",
+        },
+        {
+            id: 3,
+            label: "Salle de bain",
+            value: "Salle de bain",
+        },
+        {
+            id: 4,
+            label: "Salle à manger",
+            value: "Salle à manger",
+        },
+        {
+            id: 5,
+            label: "Jardin",
+            value: "Jardin",
+        },
+    ];
+
+    const listFurniture = [
+        {
+            id: 1,
+            label: "Armoire",
+            value: "Armoire",
+        },
+        {
+            id: 2,
+            label: "Placard",
+            value: "Placard",
+        },
+    ];
+
+    const listCategorie = [
+        {
+            id: 1,
+            label: "Outil",
+            value: "Outil",
+        },
+        {
+            id: 2,
+            label: "Documents",
+            value: "Documents",
+        },
+    ];
 
     return (
         <NativeBaseProvider>
@@ -174,11 +229,11 @@ export default function Item({ route, navigation }) {
                                 }}
                                 mt="1"
                             >
-                                {rooms.map((room) => (
+                                {listRoom.map((item) => (
                                     <Select.Item
-                                        key={room.ID}
-                                        label={room.Name}
-                                        value={room.Name}
+                                        key={item.id}
+                                        label={item.label}
+                                        value={item.value}
                                     />
                                 ))}
                                 <Select.Item
@@ -191,7 +246,6 @@ export default function Item({ route, navigation }) {
                                     onPress={() =>
                                         goToAddSomething({
                                             nom: "Ajouter une pièce :",
-                                            elem: "room",
                                         })
                                     }
                                 />
@@ -227,11 +281,11 @@ export default function Item({ route, navigation }) {
                                 }}
                                 mt="1"
                             >
-                                {furnitures.map((furniture) => (
+                                {listFurniture.map((item) => (
                                     <Select.Item
-                                        key={furniture.ID}
-                                        label={furniture.Name}
-                                        value={furniture.Name}
+                                        key={item.id}
+                                        label={item.label}
+                                        value={item.value}
                                     />
                                 ))}
                                 <Select.Item
@@ -244,7 +298,6 @@ export default function Item({ route, navigation }) {
                                     onPress={() =>
                                         goToAddSomething({
                                             nom: "Ajouter un meuble :",
-                                            elem: "furniture"
                                         })
                                     }
                                 />
@@ -259,8 +312,8 @@ export default function Item({ route, navigation }) {
                             <FormControl.Label>Catégorie</FormControl.Label>
                             <Select
                                 minWidth="200"
-                                value={category}
-                                onValueChange={setCategory}
+                                value={categorie}
+                                onValueChange={setCategorie}
                                 dropdownIcon={
                                     <Icon
                                         as={MaterialCommunityIcons}
@@ -280,11 +333,11 @@ export default function Item({ route, navigation }) {
                                 }}
                                 mt="1"
                             >
-                                {categories.map((category) => (
+                                {listCategorie.map((item) => (
                                     <Select.Item
-                                        key={category.ID}
-                                        label={category.Name}
-                                        value={category.Name}
+                                        key={item.id}
+                                        label={item.label}
+                                        value={item.value}
                                     />
                                 ))}
                                 <Select.Item
@@ -297,13 +350,12 @@ export default function Item({ route, navigation }) {
                                     onPress={() =>
                                         goToAddSomething({
                                             nom: "Ajouter une catégorie :",
-                                            elem: "category",
                                         })
                                     }
                                 />
                             </Select>
                         </FormControl>
-                        <Add action={submitNewObjectForm}></Add>
+                        <Add action={saveForm}></Add>
                     </Stack>
                     <MenuIcon onImageChosen={setImage}></MenuIcon>
                 </ScrollView>

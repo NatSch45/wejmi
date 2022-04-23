@@ -12,40 +12,13 @@ import {
 import { StyleSheet, LogBox } from "react-native";
 import { useEffect, useState } from "react";
 import { FontAwesome5, Entypo } from "@expo/vector-icons";
-import * as SQLite from 'expo-sqlite';
+import * as Crud from '../Crud';
 
 LogBox.ignoreLogs(["NativeBase:"]);
 
-const db = SQLite.openDatabase("myDB.db")
+Crud.createAccountsTable();
 
-db.transaction((tx) => {
-    tx.executeSql("CREATE TABLE IF NOT EXISTS Accounts (ID INTEGER PRIMARY KEY NOT NULL, Username TEXT, Email TEXT, Password TEXT, Connected BOOLEAN);")
-})
-
-const getAllAccounts = async () => {
-    return new Promise(async resolve => {
-        db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM Accounts", [], (insertID, rows) => {
-                const allAccounts = rows.rows._array
-                resolve(allAccounts)
-            })
-        })
-    })
-}
-
-const connectAccount = (accountID, connected) => {
-    db.transaction((tx) => {
-        tx.executeSql("UPDATE Accounts SET connected = ? WHERE id = ?", [connected, accountID])
-    })
-}
-
-const disconnectUsers = () => {
-    db.transaction((tx) => {
-        tx.executeSql("UPDATE Accounts SET connect = ?", [false])
-    })
-}
-
-disconnectUsers()
+Crud.disconnectUsers();
 
 export default ({navigation}) => {
     const [email, setEmail] = useState("");
@@ -57,22 +30,26 @@ export default ({navigation}) => {
     const [accounts, setAccounts] = useState([]);
 
     const saveAccounts = async () => {
-        let allAccounts = await getAllAccounts()
-        console.log("\nallAccounts --> " + JSON.stringify(allAccounts))
-        setAccounts(allAccounts)
+        let allAccounts = await Crud.getAllAccounts();
+        console.log("\nallAccounts --> " + JSON.stringify(allAccounts));
+        return allAccounts;
     }
     useEffect(() => {
-        saveAccounts()
-    }, [])
+        let isMounted = true;
+        saveAccounts().then(allAccounts => {
+            if (isMounted) setAccounts(allAccounts);
+        });
+        return () => { isMounted = false }
+    }, []);
 
     const submitLoginForm = () => {
         let good = false
         accounts.forEach(e => {
             if (e.Email == email && e.Password == pwd) {
                 good = true
-                connectAccount(e.ID, true)
+                Crud.updateAccountConnexion(e.ID, true)
                 saveAccounts()
-                navigation.navigate("Object")
+                navigation.navigate("Annuaires")
             }
         });
         if (!good) {
@@ -113,6 +90,8 @@ export default ({navigation}) => {
                         onChangeText={(val) => {
                             setEmail(val);
                         }}
+                        autoCapitalize="none"
+                        keyboardType="email-address"
                     />
 
                     <Input
