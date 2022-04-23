@@ -354,7 +354,7 @@ export default function Item({ navigation }) {
                                 />
                             </Select>
                         </FormControl>
-                        <Add action={saveForm}></Add>
+                        <Add action={saveForm} label="Ajouter"></Add>
                     </Stack>
                     <MenuIcon onImageChosen={setImage}></MenuIcon>
                 </ScrollView>

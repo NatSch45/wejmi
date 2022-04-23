@@ -42,6 +42,14 @@ export default function ({ navigation }) {
             id: 3,
             name: "Malo",
         },
+        {
+            id: 4,
+            name: "Malo",
+        },
+        {
+            id: 5,
+            name: "Malo",
+        },
     ];
     const [list, updateList] = useState(item);
     const removeItem = (id) => {
@@ -58,21 +66,19 @@ export default function ({ navigation }) {
     const Example = () => {
         return (
             <Center paddingRight={10} paddingBottom={5}>
-                <Box height="200" w="400" shadow="2" rounded="lg">
-                    <Fab
-                        renderInPortal={false}
-                        size="sm"
-                        onPress={goToAddObject}
-                        icon={
-                            <Icon
-                                color="white"
-                                as={MaterialIcons}
-                                name="add"
-                                size="sm"
-                            />
-                        }
-                    />
-                </Box>
+                <Fab
+                    renderInPortal={false}
+                    size="sm"
+                    onPress={goToAddObject}
+                    icon={
+                        <Icon
+                            color="white"
+                            as={MaterialIcons}
+                            name="add"
+                            size="sm"
+                        />
+                    }
+                />
             </Center>
         );
     };

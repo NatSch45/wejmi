@@ -95,6 +95,8 @@ export default ({ navigation }) => {
                         onChangeText={(val) => {
                             setEmail(val);
                         }}
+                        autoCapitalize="none"
+                        keyboardType="email-address"
                     />
 
                     <Input
