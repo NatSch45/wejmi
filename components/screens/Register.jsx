@@ -9,49 +9,12 @@ import {
     IconButton,
     KeyboardAvoidingView,
 } from "native-base";
-import { StyleSheet, LogBox } from "react-native";
+import { StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
 import { MaterialIcons, FontAwesome5, Entypo } from "@expo/vector-icons";
-import * as SQLite from 'expo-sqlite';
+import * as Crud from '../Crud';
 
-const db = SQLite.openDatabase("myDB.db");
-
-db.transaction((tx) => {
-    tx.executeSql("CREATE TABLE IF NOT EXISTS Accounts (ID INTEGER PRIMARY KEY NOT NULL, Username TEXT, Email TEXT, Password TEXT, Connected BOOLEAN);")
-})
-
-const insertNewAccount = (Username, Email, Password) => {
-    db.transaction((tx) => {
-        tx.executeSql("INSERT INTO Accounts (Username, Email, Password, Connected) VALUES (?, ?, ?, ?)", [Username, Email, Password, true], (_, result) => {
-            console.log("Result: " + JSON.stringify(result.insertId))
-        }, (_, error) => {
-            console.log("Error: " + JSON.stringify(error.message))
-        })
-    })
-}
-
-const getAllAccounts = async () => {
-    return new Promise(async resolve => {
-        db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM Accounts", [], (insertID, rows) => {
-                const allAccounts = rows.rows._array
-                resolve(allAccounts)
-            })
-        })
-    })
-}
-
-const deleteAllAccounts = () => {
-    db.transaction((tx) => {
-        tx.executeSql("DELETE FROM Accounts")
-    })
-}
-const deleteAccount = (id) => {
-    db.transaction((tx) => {
-        tx.executeSql("DELETE FROM Accounts WHERE ID = ?", [id])
-    })
-}
-
+Crud.disconnectUsers();
 
 export default ({navigation}) => {
     const [username, setUsername] = useState("");
@@ -67,7 +30,7 @@ export default ({navigation}) => {
     const [accounts, setAccounts] = useState([]);
 
     const saveAccounts = async () => {
-        let allAccounts = await getAllAccounts();
+        let allAccounts = await Crud.getAllAccounts();
         console.log("\nallAccounts --> " + JSON.stringify(allAccounts));
         return allAccounts;
     }
@@ -80,28 +43,28 @@ export default ({navigation}) => {
     }, []);
 
     const checkEmail = (newEmail) => {
-        let good = true
+        let good = true;
         if (accounts !== undefined) {
             accounts.forEach(e => {
                 if (e.email == newEmail) {
-                    console.log("WRONG EMAIL\n")
+                    console.log("WRONG EMAIL\n");
                     good = false;
                 }
-            })
+            });
         }
 
         return good;
     };
 
     const submitRegisterForm = async () => {
-        console.log("Form submitted")
+        console.log("Form submitted");
         if (pwd === verifPwd) {
             if (checkEmail(email)) {
-                console.log(`Username: ${username}, Email: ${email}, Pwd: ${pwd}, VerifPwd: ${verifPwd}`)
-                insertNewAccount(username, email, pwd)
-                saveAccounts()
-                console.log(accounts + "\n")
-                navigation.navigate("Log In")
+                console.log(`Username: ${username}, Email: ${email}, Pwd: ${pwd}, VerifPwd: ${verifPwd}`);
+                Crud.insertNewAccount(username, email, pwd);
+                saveAccounts();
+                console.log(accounts + "\n");
+                navigation.navigate("Log In");
             } else {
                 console.log("An account with this email already exists\n");
             }
@@ -254,7 +217,5 @@ export default ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-    eyeIcon: {
-        color: "#919191",
-    },
+    //
 });

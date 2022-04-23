@@ -1,17 +1,12 @@
 import {
     StyleSheet,
     Image,
-    Animated,
-    TouchableHighlight,
-    TouchableOpacity,
-    StatusBar,
 } from "react-native";
 import {
     ScrollView,
     Stack,
     KeyboardAvoidingView,
     NativeBaseProvider,
-    Text,
     Heading,
     Center,
     Box,
@@ -21,32 +16,28 @@ import {
     Fab,
     Badge,
 } from "native-base";
-import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState } from "react";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useState, useEffect } from "react";
+import * as Crud from "../Crud";
 
-export default function ({ navigation }) {
-    // ZONE FUNCTIONS
+export default function ({ route, navigation }) {
+    const routeData = route.params;
 
-    // Zone CONST
+    const [objects, setObjects] = useState([]);
 
-    const item = [
-        {
-            id: 1,
-            name: "Nathan",
-        },
-        {
-            id: 2,
-            name: "Elouan",
-        },
-        {
-            id: 3,
-            name: "Malo",
-        },
-    ];
-    const [list, updateList] = useState(item);
-    const removeItem = (id) => {
-        updateList(list.filter((item) => item.id !== id));
-    };
+    const saveObjects = async () => {
+        let allObjects = await Crud.getAllObjects();
+        // console.log("\nallObjects --> " + JSON.stringify(allObjects));
+        return allObjects;
+    }
+    useEffect(() => {
+        let isMounted = true;
+        saveObjects().then(allObjects => {
+            if (isMounted) setObjects(allObjects);
+        });
+        return () => { isMounted = false }
+    }, []);
+
 
     const goToAddObject = () => {
         navigation.navigate("Ajouter un objet");
@@ -75,6 +66,15 @@ export default function ({ navigation }) {
         );
     };
 
+    if (routeData != undefined) {
+        if (routeData.updateData) {
+            saveObjects().then(objects => {
+                setObjects(objects);
+            })
+            routeData.updateData = false;
+        }
+    }
+
     // ZONE Render
     return (
         <NativeBaseProvider>
@@ -101,12 +101,12 @@ export default function ({ navigation }) {
                         w="100%"
                     >
                         {/* TEMPLATE FOR DIRECTORY */}
-                        {list.map((item) => (
-                            <View style={styles.item} key={item.id}>
+                        {objects.map((object) => (
+                            <View style={styles.item} key={object.ID}>
                                 <Box>
                                     <Image
                                         source={{
-                                            uri: "https://wallpaperaccess.com/full/317501.jpg",
+                                            uri: object.Picture,
                                         }}
                                         style={styles.image}
                                     />
@@ -116,15 +116,20 @@ export default function ({ navigation }) {
                                             fontSize="2xl"
                                             fontWeight="semibold"
                                             onPress={() =>
-                                                goToPreview({ item: item.name })
+                                                goToPreview({ item: object.Name })
                                             }
                                         >
-                                            {item.name}
+                                            {object.Name}
                                         </Heading>
                                     </Center>
                                     <IconButton
                                         style={styles.icon}
-                                        onPress={() => removeItem(item.id)}
+                                        onPress={() => {
+                                            Crud.deleteObject(object.ID);
+                                            saveObjects().then(objects => {
+                                                setObjects(objects);
+                                            })
+                                        }}
                                         icon={
                                             <Icon
                                                 as={MaterialIcons}
@@ -139,7 +144,7 @@ export default function ({ navigation }) {
                                         colorScheme="info"
                                         variant="solid"
                                     >
-                                        DÉPLACÉ
+                                        {object.Status}
                                     </Badge>
                                 </Box>
                             </View>

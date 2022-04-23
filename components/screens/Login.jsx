@@ -14,10 +14,6 @@ import { useEffect, useState } from "react";
 import { FontAwesome5, Entypo } from "@expo/vector-icons";
 import * as Crud from '../Crud';
 
-LogBox.ignoreLogs(["NativeBase:"]);
-
-Crud.createAccountsTable();
-
 Crud.disconnectUsers();
 
 export default ({navigation}) => {

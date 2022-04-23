@@ -17,16 +17,12 @@ import MenuIcon from "../MenuIcon.jsx";
 import Add from "../Button.jsx";
 import * as Crud from "../Crud.jsx"
 
-Crud.createRoomsTable();
-Crud.createFurnituresTable();
-Crud.createCategoriesTable();
-
 export default function Item({ route, navigation }) {
     const routeData = route.params;
 
     //* Form data
     const [name, setName] = useState("");
-    const [desription, setDescription] = useState("");
+    const [description, setDescription] = useState("");
     const [room, setRoom] = useState("");
     const [furniture, setFurniture] = useState("");
     const [category, setCategory] = useState("");
@@ -57,14 +53,14 @@ export default function Item({ route, navigation }) {
     const submitNewObjectForm = async () => {
         if (
             name != "" &&
-            desription != "" &&
+            description != "" &&
             room != "" &&
             furniture != "" &&
             category != ""
         ) {
             if (image != "") {
-                Crud.insertNewObject(name, description, room, furniture, category, image);
-                navigation.navigate("Annuaires");
+                await Crud.insertNewObject(name, description, room, furniture, category, image);
+                navigation.navigate("Annuaires", { updateData: true });
             } else {
                 alert("Veuillez ajouter une image !");
             }
@@ -139,7 +135,7 @@ export default function Item({ route, navigation }) {
                                 h={20}
                                 placeholder="Description"
                                 maxW="300"
-                                value={desription}
+                                value={description}
                                 onChangeText={setDescription}
                             />
                         </FormControl>
@@ -178,7 +174,7 @@ export default function Item({ route, navigation }) {
                                     <Select.Item
                                         key={room.ID}
                                         label={room.Name}
-                                        value={room.Name}
+                                        value={room.ID}
                                     />
                                 ))}
                                 <Select.Item
@@ -231,7 +227,7 @@ export default function Item({ route, navigation }) {
                                     <Select.Item
                                         key={furniture.ID}
                                         label={furniture.Name}
-                                        value={furniture.Name}
+                                        value={furniture.ID}
                                     />
                                 ))}
                                 <Select.Item
@@ -284,7 +280,7 @@ export default function Item({ route, navigation }) {
                                     <Select.Item
                                         key={category.ID}
                                         label={category.Name}
-                                        value={category.Name}
+                                        value={category.ID}
                                     />
                                 ))}
                                 <Select.Item

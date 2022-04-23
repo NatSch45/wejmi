@@ -28,14 +28,23 @@ export const insertNewAccount = (username, email, password) => {
 //* Init the Objects table
 export const createObjectsTable = () => {
     db.transaction((tx) => {
-        tx.executeSql("CREATE TABLE IF NOT EXISTS Objects (ID INTEGER PRIMARY KEY NOT NULL, UserID INTEGER, Name TEXT, Container TEXT, RoomID INTEGER, FurnitureID INTEGER, CategoryID INTEGER, Picture TEXT, Status TEXT)");
+        tx.executeSql("CREATE TABLE IF NOT EXISTS Objects (ID INTEGER PRIMARY KEY NOT NULL, Name TEXT, UserID INTEGER, Container TEXT, RoomID INTEGER, FurnitureID INTEGER, CategoryID INTEGER, Picture TEXT, Status TEXT, FOREIGN KEY (UserID) REFERENCES Accounts(ID), FOREIGN KEY (RoomID) REFERENCES Rooms(ID), FOREIGN KEY (FurnitureID) REFERENCES Furnitures(ID), FOREIGN KEY (CategoryID) REFERENCES Categories(ID))", [], (_, result) => {}, (_, error) => {
+            console.log(error);
+        });
     });
 }
 
 //* Insert a new object in database
-export const insertNewObject = (name, container, roomID, furnitureID, categoryID, picture) => {
+export const insertNewObject = async (name, container, roomID, furnitureID, categoryID, picture) => {
+    const userID = await getCurrentUserID();
     db.transaction((tx) => {
-        tx.executeSql("INSERT INTO Objects (UserID, Name, Container, RoomID, FurnitureID, CategoryID, Picture, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [getCurrentUserID(), name, container, roomID, furnitureID, categoryID, picture, "Default"]);
+        console.log(`Name: ${name}, Container: ${container}, RoomID: ${roomID}, FurnitureID: ${furnitureID}, CategoryID: ${categoryID}, Picture: "static URI", userID: ${userID}`);
+
+        tx.executeSql("INSERT INTO Objects (UserID, Name, Container, RoomID, FurnitureID, CategoryID, Picture, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [userID, name, container, roomID, furnitureID, categoryID, picture, "Default"], (_, result) => {
+            console.log();
+        }, (_, error) => {
+            console.log(error);
+        });
     });
 }
 
@@ -104,7 +113,7 @@ export const getAllAccounts = async () => {
 export const getAllObjects = async () => {
     return new Promise(async resolve => {
         db.transaction((tx) => {
-            tx.executeSql("SELECT (Name, Picture, Status) FROM Objects", [], (insertID, rows) => {
+            tx.executeSql("SELECT ID, Name, Picture, Status FROM Objects", [], (insertID, rows) => {
                 const allObjects = rows.rows._array;
                 resolve(allObjects);
             });
@@ -161,7 +170,14 @@ export const getFurnitures = async () => {
 }
 
 export const getCurrentUserID = async () => {
-    //TODO Récupérer l'ID de l'utilisateur connecté
+    return new Promise(async resolve => {
+        db.transaction((tx) => {
+            tx.executeSql("SELECT ID FROM Accounts WHERE Connected = ? LIMIT 1", [true], (insertID, rows) => {
+                const id = rows.rows._array[0].ID;
+                resolve(id);
+            });
+        });
+    });
 }
 
 
@@ -209,6 +225,13 @@ export const deleteAllAccounts = () => {
 export const deleteAccount = (accountID) => {
     db.transaction((tx) => {
         tx.executeSql("DELETE FROM Accounts WHERE ID = ?", [accountID]);
+    });
+}
+
+//* Drop Objects table
+export const dropObjectsTable = () => {
+    db.transaction((tx) => {
+        tx.executeSql("DROP TABLE IF EXISTS Objects");
     });
 }
 

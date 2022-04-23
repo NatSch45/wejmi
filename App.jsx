@@ -11,11 +11,17 @@ import AddSomething from "./components/screens/AddSomething.jsx";
 import Directory from "./components/screens/Directory.jsx";
 import Preview from "./components/screens/Preview.jsx";
 import { extendTheme } from "native-base";
+import * as Crud from "./components/Crud";
+
+Crud.createAccountsTable();
+Crud.createRoomsTable();
+Crud.createFurnituresTable();
+Crud.createCategoriesTable();
+Crud.createObjectsTable();
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
 export default function App() {
-    const scheme = useColorScheme();
     return (
         <NativeBaseProvider theme={theme}>
             <NavigationContainer>
@@ -63,8 +69,10 @@ export default function App() {
                     <Screen
                         name="Annuaires"
                         component={Directory}
-                        options={{
-                            headerStyle: { backgroundColor: "#1e90ff" },
+                        options={({ route }) => {
+                            return {
+                                headerStyle: { backgroundColor: "#1e90ff" },
+                            };
                         }}
                     />
                     <Screen
