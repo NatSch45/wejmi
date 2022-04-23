@@ -19,9 +19,10 @@ export default ({ navigation }) => {
             }}
         >
             <Heading style={styles.title}>WEJMI</Heading>
-            <Text style={styles.subTtitle} m="10" maxW="60%" fontSize="md">
-                L'application qui te permet de retrouver tes affaires.
+            <Text style={styles.subTtitle}>
+                Fatigués de perdre vos affaires en les rangeant ? 🙄
             </Text>
+            <Text style={styles.subTtitle}>Wejmi™ est fait pour vous ! 💪</Text>
 
             <Button.Group
                 variant="outline"
@@ -48,11 +49,12 @@ const styles = StyleSheet.create({
     },
     subTtitle: {
         textAlign: "center",
+        paddingTop: "5%",
         width: "80%",
     },
     buttonGroup: {
         position: "absolute",
-        bottom: 30,
+        bottom: 10,
         justifyContent: "center",
         width: "100%",
     },
