@@ -299,7 +299,7 @@ export default function Item({ route, navigation }) {
                                 />
                             </Select>
                         </FormControl>
-                        <Add action={submitNewObjectForm}></Add>
+                        <Add action={submitNewObjectForm} label="Ajouter"></Add>
                     </Stack>
                     <MenuIcon onImageChosen={setImage}></MenuIcon>
                 </ScrollView>

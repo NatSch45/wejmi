@@ -16,12 +16,14 @@ import {
     VStack,
     Center,
     Box,
+    HStack,
     View,
     IconButton,
     Icon,
     Fab,
     Badge,
 } from "native-base";
+import Add from "../Button.jsx";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
 
@@ -65,72 +67,73 @@ export default function ({ navigation, route }) {
                         alignItems="center"
                         w="100%"
                     >
-                        <Heading>{data.item}</Heading>
-                    </Stack>
-                    <Stack
-                        marginBottom={10}
-                        space={1}
-                        style={{ marginTop: 5 }}
-                        alignItems="center"
-                        w="100%"
-                    >
-                        <VStack space={4} alignItems="center">
-                            <Center
-                                w="80"
-                                minHeight="20"
-                                h="100"
-                                bg="indigo.500"
-                                rounded="md"
-                                shadow={3}
-                            >
-                                <ScrollView>
-                                    <Text
-                                        fontSize="2xl"
-                                        color="white"
-                                        maxW="95%"
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        textAlign="justify"
-                                        padding="2"
+                        <Stack
+                            direction={["column", "column", "row"]}
+                            rounded="lg"
+                            overflow="hidden"
+                            width={300}
+                            style={{ marginTop: 20 }}
+                            shadow="1"
+                            _light={{
+                                backgroundColor: "coolGray.50",
+                            }}
+                        >
+                            <Stack flex="1" p="4" space={[3, 3, 1.5]}>
+                                <Stack space="2">
+                                    <Heading
+                                        size="xl"
+                                        ml="-1"
+                                        style={{ marginBottom: 10 }}
                                     >
-                                        Lorem ipsum
+                                        {data.item}
+                                    </Heading>
+                                    <Text
+                                        fontSize="xs"
+                                        color="violet.500"
+                                        fontWeight="500"
+                                        ml="-0.5"
+                                        mt="-1"
+                                    >
+                                        Catégorie
                                     </Text>
-                                </ScrollView>
-                            </Center>
-                            <Center
-                                w="64"
-                                h="20"
-                                bg="indigo.500"
-                                rounded="md"
-                                shadow={3}
-                            >
-                                <Text fontSize="2xl" color="white">
-                                    Pièce
-                                </Text>
-                            </Center>
-                            <Center
-                                w="64"
-                                h="20"
-                                bg="indigo.500"
-                                rounded="md"
-                                shadow={3}
-                            >
-                                <Text fontSize="2xl" color="white">
-                                    Meuble
-                                </Text>
-                            </Center>
-                            <Center
-                                w="64"
-                                h="20"
-                                bg="indigo.500"
-                                rounded="md"
-                                shadow={3}
-                            >
-                                <Text fontSize="2xl" color="white">
-                                    Catégorie
-                                </Text>
-                            </Center>
-                        </VStack>
+                                    <Text
+                                        fontSize="xs"
+                                        color="red.500"
+                                        fontWeight="500"
+                                        ml="-0.5"
+                                        mt="-1"
+                                    >
+                                        Pièce
+                                    </Text>
+                                    <Text
+                                        fontSize="xs"
+                                        color="blue.500"
+                                        fontWeight="500"
+                                        ml="-0.5"
+                                        mt="-1"
+                                    >
+                                        Meuble
+                                    </Text>
+                                </Stack>
+                                <Text fontWeight="400">Description</Text>
+                                <HStack
+                                    alignItems="center"
+                                    space="4"
+                                    justifyContent="space-between"
+                                >
+                                    <HStack alignItems="center">
+                                        <Badge
+                                            style={styles.badge}
+                                            colorScheme="info"
+                                            variant="solid"
+                                        >
+                                            DÉPLACÉ
+                                        </Badge>
+                                    </HStack>
+                                </HStack>
+                            </Stack>
+                        </Stack>
+                        <Add label="Modifier"></Add>
                     </Stack>
                 </ScrollView>
             </KeyboardAvoidingView>
