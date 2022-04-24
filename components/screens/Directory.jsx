@@ -1,5 +1,4 @@
 import { StyleSheet, Image } from "react-native";
-import React from "react";
 import {
     ScrollView,
     Stack,
@@ -18,7 +17,7 @@ import {
     AlertDialog,
 } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import * as Crud from "../Crud";
 
 export default function ({ route, navigation }) {
@@ -28,7 +27,7 @@ export default function ({ route, navigation }) {
 
     const [isOpen, setIsOpen] = useState(false);
     const onClose = () => setIsOpen(false);
-    const cancel = React.useRef(null);
+    const cancel = useRef(null);
 
     const statusObject = async (object) => {
         const statusValue = object.status;
@@ -159,7 +158,7 @@ export default function ({ route, navigation }) {
                                     </Center>
                                     <IconButton
                                         style={styles.icon}
-                                        onPress={() => setIsOpen(!isOpen)}
+                                        onPress={() => {setIsOpen(!isOpen); cancel.current = object.ObjectID}}
                                         icon={
                                             <Icon
                                                 as={MaterialIcons}
@@ -206,22 +205,18 @@ export default function ({ route, navigation }) {
                                                     variant="unstyled"
                                                     colorScheme="coolGray"
                                                     onPress={onClose}
-                                                    ref={cancel}
                                                 >
                                                     Annuler
                                                 </Button>
                                                 <Button
                                                     colorScheme="danger"
                                                     onPress={() => {
-                                                        Crud.deleteObject(
-                                                            object.ObjectID
-                                                        );
+                                                        onClose();
+                                                        const objectID = cancel.current
+                                                        Crud.deleteObject(objectID);
                                                         saveObjects().then(
                                                             (objects) => {
-                                                                setObjects(
-                                                                    objects
-                                                                );
-                                                                onClose;
+                                                                setObjects(objects);
                                                             }
                                                         );
                                                     }}
