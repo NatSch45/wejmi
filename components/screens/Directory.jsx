@@ -7,7 +7,7 @@ import {
     Heading,
     Center,
     Box,
-    FormControl,
+    HStack,
     Select,
     View,
     IconButton,
@@ -21,36 +21,68 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useState, useEffect, useRef } from "react";
 import * as Crud from "../Crud";
-import { copyAsync } from "expo-file-system";
 
 export default function ({ route, navigation }) {
     const routeData = route.params;
 
+    const [fullDataObjects, setFullDataObjects] = useState([]);
     const [objects, setObjects] = useState([]);
-
     const [alphab, setAlphab] = useState(false);
     const [room, setRoom] = useState("");
-    const [furniture, setFurniture] = useState("");
     const [category, setCategory] = useState("");
+    const [furniture, setFurniture] = useState("");
+
+    const [rooms, setRooms] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [furnitures, setFurnitures] = useState([]);
 
     const [isOpen, setIsOpen] = useState(false);
     const onClose = () => setIsOpen(false);
     const cancel = useRef(null);
 
-    //* Filter objects depending to room, furniture, category or alphabetically
-    const filter = () => {
-        const updatedObjects = objects;
-
-        if (alphab) updatedObjects.sort((objectA, objectB) => {
-            const textA = objectA.Name.toUpperCase();
-            const textB = objectB.Name.toUpperCase();
-            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+    const saveLists = async () => {
+        const allRooms = await Crud.getRooms();
+        const allCategories = await Crud.getCategories();
+        const allFurnitures = await Crud.getFurnitures();
+        return [allRooms, allCategories, allFurnitures];
+    };
+    useEffect(() => {
+        let isMounted = true;
+        saveLists().then((lists) => {
+            if (isMounted) {
+                setRooms(lists[0]);
+                setCategories(lists[1]);
+                setFurnitures(lists[2]);
+            }
         });
-        if (room) updatedObjects.filter(obj => obj.RoomID == room);
-        if (furniture) updatedObjects.filter(obj => obj.FurnitureID == furniture);
-        if (category) updatedObjects.filter(obj => obj.CategoryID == category);
-        setObjects(updatedObjects);
-    }
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    const saveObjects = async () => {
+        let allObjects = await Crud.getAllObjects();
+        return allObjects;
+    };
+    useEffect(() => {
+        let isMounted = true;
+        saveObjects().then((allObjects) => {
+            if (isMounted) {
+                setObjects(allObjects);
+            }
+        });
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+    useEffect(() => {
+        if (fullDataObjects.length === 0) {
+            setFullDataObjects(objects);
+        }
+    }, [objects]);
+    useEffect(() => {
+        console.log("fullDataObjects : " + fullDataObjects);
+    }, [fullDataObjects]);
 
     const statusObject = async (object) => {
         const statusValue = object.status;
@@ -77,22 +109,41 @@ export default function ({ route, navigation }) {
         saveObjects().then((objects) => {
             setObjects(objects);
         });
+        filterObjects();
     };
 
-    const saveObjects = async () => {
-        let allObjects = await Crud.getAllObjects();
-        // console.log("\nallObjects --> " + JSON.stringify(allObjects));
-        return allObjects;
-    };
-    useEffect(() => {
-        let isMounted = true;
-        saveObjects().then((allObjects) => {
-            if (isMounted) setObjects(allObjects);
+    //* Filter objects depending to room, furniture, category or alphabetically
+    const filterObjects = () => {
+        let updatedObjects = fullDataObjects;
+
+        if (alphab) updatedObjects = updatedObjects.sort((objectA, objectB) => {
+            const textA = objectA.Name.toUpperCase();
+            const textB = objectB.Name.toUpperCase();
+            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
         });
-        return () => {
-            isMounted = false;
+        if (room != "" && room != "Default") {
+            updatedObjects = updatedObjects.filter(obj => obj.RoomID == room);
         };
-    }, []);
+        if (furniture != "" && furniture != "Default") {
+            updatedObjects = updatedObjects.filter(obj => obj.FurnitureID == furniture);
+        };
+        if (category != "" && category != "Default") {
+            updatedObjects = updatedObjects.filter(obj => obj.CategoryID == category);
+        };
+        setObjects(updatedObjects);
+    }
+    useEffect(() => {
+        filterObjects();
+    }, [alphab]);
+    useEffect(() => {
+        filterObjects();
+    }, [room]);
+    useEffect(() => {
+        filterObjects();
+    }, [furniture]);
+    useEffect(() => {
+        filterObjects();
+    }, [category]);
 
     const goToAddObject = () => {
         navigation.navigate("Ajouter un objet");
@@ -156,6 +207,10 @@ export default function ({ route, navigation }) {
                 >
                     <IconButton
                         style={styles.sortAlpha}
+                        onPress={() => {
+                            let tempAlphab = alphab;
+                            setAlphab(!tempAlphab);
+                        }}
                         icon={
                             <Icon
                                 as={MaterialIcons}
@@ -165,17 +220,67 @@ export default function ({ route, navigation }) {
                             />
                         }
                     ></IconButton>
-                    <Box w="3/4" maxW="150" style={{ left: 50 }}>
+                </Stack>
+                <HStack alignItems="center" style={{ left: 30 }}>
+                    <Center h="20">
                         <Select
                             minWidth="100"
-                            accessibilityLabel="Choose Service"
-                            placeholder="Choose Service"
-                            mt={1}
+                            accessibilityLabel="Room"
+                            placeholder="Room"
+                            value={room}
+                            onValueChange={setRoom}
+                            mr={1}
                         >
-                            <Select.Item label="UX Research" value="ux" />
+                            <Select.Item key={0} label={"Default"} value={"Default"}/>
+                            {rooms.map((aRoom) => (
+                                <Select.Item
+                                    key={aRoom.RoomID}
+                                    label={aRoom.Name}
+                                    value={aRoom.RoomID}
+                                />
+                            ))}
                         </Select>
-                    </Box>
-                </Stack>
+                    </Center>
+                    <Center h="20">
+                        <Select
+                            minWidth="100"
+                            accessibilityLabel="Furniture"
+                            placeholder="Furniture"
+                            value={furniture}
+                            onValueChange={setFurniture}
+                            mr={1}
+                        >
+                            <Select.Item key={0} label={"Default"} value={"Default"}/>
+                            {furnitures.map((aFurniture) => (
+                                <Select.Item
+                                    key={aFurniture.FurnitureID}
+                                    label={aFurniture.Name}
+                                    value={aFurniture.FurnitureID}
+                                />
+                            ))}
+                        </Select>
+                    </Center>
+                    <Center h="20">
+                        <Select
+                            minWidth="100"
+                            accessibilityLabel="Category"
+                            placeholder="Category"
+                            value={category}
+                            onValueChange={setCategory}
+                            mr={1}
+                        >
+                            <Select.Item key={0} label={"Default"} value={"Default"}/>
+                            {categories.map((aCategory) => (
+                                <Select.Item
+                                    key={aCategory.CategoryID}
+                                    label={aCategory.Name}
+                                    value={aCategory.CategoryID}
+                                />
+                            ))}
+                        </Select>
+                    </Center>
+                </HStack>
+
                 <ScrollView style={styles.container}>
                     <Stack
                         marginBottom={10}
@@ -343,7 +448,7 @@ const styles = StyleSheet.create({
     },
     sortAlpha: {
         position: "absolute",
-        left: 10,
+        left: "45%",
         borderRadius: 50,
     },
 });

@@ -113,9 +113,11 @@ export const getAllAccounts = async () => {
 export const getAllObjects = async () => {
     return new Promise(async resolve => {
         db.transaction((tx) => {
-            tx.executeSql("SELECT ObjectID, Name, Picture, Status, Color FROM Objects", [], (insertID, rows) => {
+            tx.executeSql("SELECT ObjectID, Objects.Name, Picture, Status, Color, RoomID, FurnitureID, CategoryID FROM Objects INNER JOIN Rooms ON Rooms.RoomID = Objects.Room INNER JOIN Furnitures ON Objects.Furniture = Furnitures.FurnitureID INNER JOIN Categories ON Objects.Category = Categories.CategoryID", [], (insertID, rows) => {
                 const allObjects = rows.rows._array;
                 resolve(allObjects);
+            }, (_, error) => {
+                console.log("ERROR: " + error);
             });
         });
     });
