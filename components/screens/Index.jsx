@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     },
     buttonGroup: {
         position: "absolute",
-        bottom: 10,
+        bottom: 30,
         justifyContent: "center",
         width: "100%",
     },
