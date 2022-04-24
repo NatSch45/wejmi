@@ -30,7 +30,7 @@ Avec l'application WEJMI™, vous allez pouvoir :
     -   Le statut (A sa place, Déplacé temporairement, Perdu)
     -   Et une brève description
 -   Supprimer un objet de votre annuaire
--   Modiifier un objet de votre annuaire
+-   Modifier un objet de votre annuaire
 -   De filtrer les objets par nom, catégorie, pièce...
 
 ### ❗️ Fonctionnalités supplémentaires
