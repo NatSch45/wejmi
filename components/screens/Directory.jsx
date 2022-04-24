@@ -30,27 +30,31 @@ export default function ({ route, navigation }) {
     const onClose = () => setIsOpen(false);
     const cancel = React.useRef(null);
 
-    const statusObject = async (value) => {
-        const statusValue = value.status;
-        const id = value.id;
-        if (statusValue == "PERDU") {
-            let updateObject = Crud.updateStatusObject(
-                id,
-                "success",
-                "A SA PLACE"
-            );
-            return updateObject;
-        } else if (statusValue == "A SA PLACE") {
-            let updateObject = Crud.updateStatusObject(
-                id,
-                "info",
-                "DÉPLACÉ TEMPORAIREMENT"
-            );
-            return updateObject;
-        } else if (statusValue == "DÉPLACÉ TEMPORAIREMENT") {
-            let updateObject = Crud.updateStatusObject(id, "warning", "PERDU");
-            return updateObject;
+    const statusObject = async (object) => {
+        const statusValue = object.status;
+        const id = object.id;
+
+        switch (statusValue) {
+            case "PERDU":
+                Crud.updateStatusObject(id, "success", "A SA PLACE");
+                break;
+
+            case "A SA PLACE":
+                Crud.updateStatusObject(id, "info", "DÉPLACÉ TEMPORAIREMENT");
+                break;
+
+            case "DÉPLACÉ TEMPORAIREMENT":
+                Crud.updateStatusObject(id, "warning", "PERDU");
+                break;
+        
+            default:
+                console.log("ERROR: Wrong status value");
+                break;
         }
+
+        saveObjects().then((objects) => {
+            setObjects(objects);
+        });
     };
 
     const saveObjects = async () => {

@@ -125,7 +125,7 @@ export const getAllObjects = async () => {
 export const getObject = async (id) => {
     return new Promise(async resolve => {
         db.transaction((tx) => {
-            tx.executeSql("SELECT Objects.Name, Container, Picture, Status, Color, Rooms.Name AS RoomName, Furnitures.Name AS FurnitureName, Categories.Name AS CategoryName FROM Objects INNER JOIN Rooms ON Rooms.RoomID = Objects.Room INNER JOIN Furnitures ON Objects.Furniture = Furnitures.FurnitureID INNER JOIN Categories ON Objects.Category = Categories.CategoryID WHERE ObjectID = ?", [id], (insertID, rows) => {
+            tx.executeSql("SELECT Objects.ObjectID, Objects.Name, Container, Picture, Status, Color, Rooms.Name AS RoomName, Furnitures.Name AS FurnitureName, Categories.Name AS CategoryName FROM Objects INNER JOIN Rooms ON Rooms.RoomID = Objects.Room INNER JOIN Furnitures ON Objects.Furniture = Furnitures.FurnitureID INNER JOIN Categories ON Objects.Category = Categories.CategoryID WHERE ObjectID = ?", [id], (insertID, rows) => {
                 const object = rows.rows._array;
                 resolve(object);
             }, (_, error) => {
