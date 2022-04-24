@@ -15,24 +15,40 @@ import {
 import { useState, useEffect } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MenuIcon from "../MenuIcon.jsx";
-import Add from "../Button.jsx";
-import * as Crud from "../Crud.jsx";
+import Update from "../Button.jsx";
+import * as Crud from "../Crud";
 
 export default function Item({ route, navigation }) {
+    const data = route.params;
+    const [object, changeObject] = useState([]);
+    const saveObject = async () => {
+        let oneObject = await Crud.getObject(data.id);
+        return oneObject[0];
+    };
+    useEffect(() => {
+        let isMounted = true;
+        saveObject().then((oneObject) => {
+            if (isMounted) changeObject(oneObject);
+        });
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
     const { colors } = useTheme();
     const routeData = route.params;
 
     //* Form data
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [room, setRoom] = useState("");
-    const [furniture, setFurniture] = useState("");
-    const [category, setCategory] = useState("");
-    const [image, setImage] = useState("");
+    const [name, changeName] = useState("");
+    const [description, changeDescription] = useState("");
+    const [room, changeRoom] = useState("");
+    const [furniture, changeFurniture] = useState("");
+    const [category, changeCategory] = useState("");
+    const [image] = useState("");
 
-    const [rooms, setRooms] = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [furnitures, setFurnitures] = useState([]);
+    const [rooms, changeRooms] = useState([]);
+    const [categories, changeCategories] = useState([]);
+    const [furnitures, changeFurnitures] = useState([]);
 
     const saveLists = async () => {
         const allRooms = await Crud.getRooms();
@@ -44,9 +60,9 @@ export default function Item({ route, navigation }) {
         let isMounted = true;
         saveLists().then((lists) => {
             if (isMounted) {
-                setRooms(lists[0]);
-                setCategories(lists[1]);
-                setFurnitures(lists[2]);
+                changeRooms(lists[0]);
+                changeCategories(lists[1]);
+                changeFurnitures(lists[2]);
             }
         });
         return () => {
@@ -54,7 +70,7 @@ export default function Item({ route, navigation }) {
         };
     }, []);
 
-    const submitModifyObjectForm = async () => {
+    const submitModifyObjectForm = async (objectID) => {
         if (
             name != "" &&
             description != "" &&
@@ -62,19 +78,6 @@ export default function Item({ route, navigation }) {
             furniture != "" &&
             category != ""
         ) {
-            if (image != "") {
-                await Crud.insertNewObject(
-                    name,
-                    description,
-                    room,
-                    furniture,
-                    category,
-                    image
-                );
-                navigation.navigate("Preview", { updateData: true });
-            } else {
-                alert("Veuillez ajouter une image !");
-            }
         } else {
             alert("Veuillez remplir tous les champs !");
         }
@@ -87,9 +90,9 @@ export default function Item({ route, navigation }) {
     if (routeData != undefined) {
         if (routeData.updateData) {
             saveLists().then((lists) => {
-                setRooms(lists[0]);
-                setCategories(lists[1]);
-                setFurnitures(lists[2]);
+                changeRooms(lists[0]);
+                changeCategories(lists[1]);
+                changeFurnitures(lists[2]);
             });
             routeData.updateData = false;
         }
@@ -112,14 +115,12 @@ export default function Item({ route, navigation }) {
                         alignItems="center"
                         w="100%"
                     >
-                        {image != "" && (
                             <Image
                                 source={{
-                                    uri: image,
+                                    uri: object.Picture,
                                 }}
                                 style={styles.image}
                             ></Image>
-                        )}
                         <Input
                             size="xl"
                             variant="underlined"
@@ -127,7 +128,7 @@ export default function Item({ route, navigation }) {
                             borderColor="blue.400"
                             value={name}
                             onChangeText={(name) => {
-                                setName(name);
+                                changeName(name);
                             }}
                             w="75%"
                         />
@@ -145,7 +146,7 @@ export default function Item({ route, navigation }) {
                                 placeholder="Description"
                                 maxW="300"
                                 value={description}
-                                onChangeText={setDescription}
+                                onChangeText={changeDescription}
                             />
                         </FormControl>
 
@@ -161,7 +162,7 @@ export default function Item({ route, navigation }) {
                                 accessibilityLabel="Choisir la pièce"
                                 placeholder="Choisir la pièce"
                                 value={room}
-                                onValueChange={setRoom}
+                                onValueChange={changeRoom}
                                 dropdownIcon={
                                     <Icon
                                         as={MaterialCommunityIcons}
@@ -214,7 +215,7 @@ export default function Item({ route, navigation }) {
                                 accessibilityLabel="Choisir le meuble"
                                 placeholder="Choisir le meuble"
                                 value={furniture}
-                                onValueChange={setFurniture}
+                                onValueChange={changeFurniture}
                                 dropdownIcon={
                                     <Icon
                                         as={MaterialCommunityIcons}
@@ -265,7 +266,7 @@ export default function Item({ route, navigation }) {
                             <Select
                                 minWidth="200"
                                 value={category}
-                                onValueChange={setCategory}
+                                onValueChange={changeCategory}
                                 dropdownIcon={
                                     <Icon
                                         as={MaterialCommunityIcons}
@@ -308,7 +309,7 @@ export default function Item({ route, navigation }) {
                                 />
                             </Select>
                         </FormControl>
-                        <Add action={submitModifyObjectForm} label="Modifier"></Add>
+                        <Update action={submitModifyObjectForm} label="Modifier"></Update>
                     </Stack>
                 </ScrollView>
             </KeyboardAvoidingView>

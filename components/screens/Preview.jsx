@@ -1,5 +1,6 @@
 import { StyleSheet, Image } from "react-native";
 import {
+    Navigation,
     ScrollView,
     Stack,
     KeyboardAvoidingView,
@@ -10,11 +11,15 @@ import {
     Badge,
 } from "native-base";
 import { useState, useEffect } from "react";
-import Add from "../Button.jsx";
+import Modify from "../Button.jsx";
 import * as Crud from "../Crud";
 
 export default function ({ route, navigation }) {
     const data = route.params;
+
+    const goToModify = ({ id }) => {
+        navigation.navigate("Modifier un objet", { id });
+    };
 
     const [object, setObject] = useState([]);
 
@@ -136,7 +141,7 @@ export default function ({ route, navigation }) {
                                 </HStack>
                             </Stack>
                         </Stack>
-                        <Add action={navigation.navigate("Modify", { updateData: true })} label="Modifier"></Add>
+                        <Modify action={goToModify} label="Modifier"></Modify>
                     </Stack>
                 </ScrollView>
             </KeyboardAvoidingView>
