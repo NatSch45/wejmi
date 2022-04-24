@@ -1,4 +1,4 @@
-import { View, Heading, Text, Button } from "native-base";
+import { View, Heading, Text, Button, Image } from "native-base";
 import { StyleSheet } from "react-native";
 
 export default ({ navigation }) => {
@@ -10,6 +10,8 @@ export default ({ navigation }) => {
         navigation.navigate("Register");
     };
 
+    const img =
+        "https://raw.githubusercontent.com/NatSch45/wejmi/main/assets/Logo.png";
     return (
         <View
             style={{
@@ -18,6 +20,12 @@ export default ({ navigation }) => {
                 alignItems: "center",
             }}
         >
+            <Image
+                size={150}
+                source={{ uri: img }}
+                alt="logo"
+                style={{ position: "absolute", top: 40 }}
+            ></Image>
             <Heading style={styles.title}>WEJMI</Heading>
             <Text style={styles.subTtitle}>
                 Fatigués de perdre vos affaires en les rangeant ? 🙄

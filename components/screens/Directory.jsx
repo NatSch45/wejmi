@@ -17,10 +17,12 @@ import {
     Pressable,
     Badge,
     AlertDialog,
+    PresenceTransition,
 } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useState, useEffect, useRef } from "react";
 import * as Crud from "../Crud";
+import Add from "../Button.jsx";
 
 export default function ({ route, navigation }) {
     const routeData = route.params;
@@ -32,6 +34,7 @@ export default function ({ route, navigation }) {
     const [category, setCategory] = useState("");
     const [furniture, setFurniture] = useState("");
 
+    const [toggle, setToggle] = useState(false);
     const [rooms, setRooms] = useState([]);
     const [categories, setCategories] = useState([]);
     const [furnitures, setFurnitures] = useState([]);
@@ -172,6 +175,101 @@ export default function ({ route, navigation }) {
         );
     };
 
+    const OpenFilter = () => {
+        return (
+            <View>
+                <PresenceTransition
+                    visible={toggle}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1, transition: { duration: 250 } }}
+                >
+                    <Stack
+                        marginBottom={10}
+                        space={1}
+                        style={{ marginTop: 5 }}
+                        alignItems="flex-start"
+                        w="100%"
+                    >
+                        <IconButton
+                        style={styles.sortAlpha}
+                        onPress={() => {
+                            let tempAlphab = alphab;
+                            setAlphab(!tempAlphab);
+                        }}
+                        icon={
+                            <Icon
+                                as={MaterialIcons}
+                                size="6"
+                                name="sort-by-alpha"
+                                color="blue.500"
+                            />
+                        }
+                        ></IconButton>
+                    </Stack>
+                    <HStack alignItems="center" style={{ left: 30 }}>
+                        <Center h="20">
+                            <Select
+                                minWidth="100"
+                                accessibilityLabel="Room"
+                                placeholder="Room"
+                                value={room}
+                                onValueChange={setRoom}
+                                mr={1}
+                            >
+                                <Select.Item key={0} label={"Default"} value={"Default"}/>
+                                {rooms.map((aRoom) => (
+                                    <Select.Item
+                                        key={aRoom.RoomID}
+                                        label={aRoom.Name}
+                                        value={aRoom.RoomID}
+                                    />
+                                ))}
+                            </Select>
+                        </Center>
+                        <Center h="20">
+                            <Select
+                                minWidth="100"
+                                accessibilityLabel="Furniture"
+                                placeholder="Furniture"
+                                value={furniture}
+                                onValueChange={setFurniture}
+                                mr={1}
+                            >
+                                <Select.Item key={0} label={"Default"} value={"Default"}/>
+                                {furnitures.map((aFurniture) => (
+                                    <Select.Item
+                                        key={aFurniture.FurnitureID}
+                                        label={aFurniture.Name}
+                                        value={aFurniture.FurnitureID}
+                                    />
+                                ))}
+                            </Select>
+                        </Center>
+                        <Center h="20">
+                            <Select
+                                minWidth="100"
+                                accessibilityLabel="Category"
+                                placeholder="Category"
+                                value={category}
+                                onValueChange={setCategory}
+                                mr={1}
+                            >
+                                <Select.Item key={0} label={"Default"} value={"Default"}/>
+                                {categories.map((aCategory) => (
+                                    <Select.Item
+                                        key={aCategory.CategoryID}
+                                        label={aCategory.Name}
+                                        value={aCategory.CategoryID}
+                                    />
+                                ))}
+                            </Select>
+                        </Center>
+                    </HStack>
+                </PresenceTransition>
+            </View>
+        );
+    };
+
     if (routeData != undefined) {
         if (routeData.updateData) {
             saveObjects().then((objects) => {
@@ -197,89 +295,22 @@ export default function ({ route, navigation }) {
                     w="100%"
                 >
                     <Heading style={styles.title}>Annuaires</Heading>
+                    {/* HERE */}
+                    <Button
+                        style={{ position: "absolute", right: 20, top: 50 }}
+                        onPress={() => setToggle(!toggle)}
+                    >
+                        Filtre
+                    </Button>
                 </Stack>
                 <Stack
-                    marginBottom={10}
+                    marginBottom={5}
                     space={1}
-                    style={{ marginTop: 5 }}
+                    style={{ marginTop: 10 }}
                     alignItems="flex-start"
                     w="100%"
-                >
-                    <IconButton
-                        style={styles.sortAlpha}
-                        onPress={() => {
-                            let tempAlphab = alphab;
-                            setAlphab(!tempAlphab);
-                        }}
-                        icon={
-                            <Icon
-                                as={MaterialIcons}
-                                size="6"
-                                name="sort-by-alpha"
-                                color="blue.500"
-                            />
-                        }
-                    ></IconButton>
-                </Stack>
-                <HStack alignItems="center" style={{ left: 30 }}>
-                    <Center h="20">
-                        <Select
-                            minWidth="100"
-                            accessibilityLabel="Room"
-                            placeholder="Room"
-                            value={room}
-                            onValueChange={setRoom}
-                            mr={1}
-                        >
-                            <Select.Item key={0} label={"Default"} value={"Default"}/>
-                            {rooms.map((aRoom) => (
-                                <Select.Item
-                                    key={aRoom.RoomID}
-                                    label={aRoom.Name}
-                                    value={aRoom.RoomID}
-                                />
-                            ))}
-                        </Select>
-                    </Center>
-                    <Center h="20">
-                        <Select
-                            minWidth="100"
-                            accessibilityLabel="Furniture"
-                            placeholder="Furniture"
-                            value={furniture}
-                            onValueChange={setFurniture}
-                            mr={1}
-                        >
-                            <Select.Item key={0} label={"Default"} value={"Default"}/>
-                            {furnitures.map((aFurniture) => (
-                                <Select.Item
-                                    key={aFurniture.FurnitureID}
-                                    label={aFurniture.Name}
-                                    value={aFurniture.FurnitureID}
-                                />
-                            ))}
-                        </Select>
-                    </Center>
-                    <Center h="20">
-                        <Select
-                            minWidth="100"
-                            accessibilityLabel="Category"
-                            placeholder="Category"
-                            value={category}
-                            onValueChange={setCategory}
-                            mr={1}
-                        >
-                            <Select.Item key={0} label={"Default"} value={"Default"}/>
-                            {categories.map((aCategory) => (
-                                <Select.Item
-                                    key={aCategory.CategoryID}
-                                    label={aCategory.Name}
-                                    value={aCategory.CategoryID}
-                                />
-                            ))}
-                        </Select>
-                    </Center>
-                </HStack>
+                ></Stack>
+                {toggle == true && <OpenFilter></OpenFilter>}
 
                 <ScrollView style={styles.container}>
                     <Stack
