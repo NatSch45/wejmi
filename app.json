@@ -1,10 +1,12 @@
 {
     "expo": {
         "name": "wejmi",
-        "slug": "wejmi",
+        "slug": "petufiant",
         "version": "1.0.0",
         "orientation": "portrait",
         "icon": "./assets/Logo.png",
+        "sdkVersion": "44.0.0",
+        "platforms": ["ios", "android"],
         "splash": {
             "image": "./assets/splash.png",
             "resizeMode": "contain",
