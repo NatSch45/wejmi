@@ -111,6 +111,7 @@ Vous allez également pouvoir :
 # BUG :
 
 -   Quand un nouveau compte est créé, il n'est pas possible de se connecter. Il faut revenir sur la page d'accueil et se connecter ensuite.
+-   Avec l'APK, la caméra et l'ouverture de la gallerie ne fonctionne pas.
 
 # 👥 Équipe
 
