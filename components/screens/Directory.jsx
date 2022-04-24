@@ -1,7 +1,5 @@
-import {
-    StyleSheet,
-    Image,
-} from "react-native";
+import { StyleSheet, Image } from "react-native";
+import React from "react";
 import {
     ScrollView,
     Stack,
@@ -12,9 +10,11 @@ import {
     Box,
     View,
     IconButton,
+    Button,
     Icon,
     Fab,
     Badge,
+    AlertDialog,
 } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
@@ -25,19 +25,24 @@ export default function ({ route, navigation }) {
 
     const [objects, setObjects] = useState([]);
 
+    const [isOpen, setIsOpen] = useState(false);
+    const onClose = () => setIsOpen(false);
+    const cancel = React.useRef(null);
+
     const saveObjects = async () => {
         let allObjects = await Crud.getAllObjects();
         // console.log("\nallObjects --> " + JSON.stringify(allObjects));
         return allObjects;
-    }
+    };
     useEffect(() => {
         let isMounted = true;
-        saveObjects().then(allObjects => {
+        saveObjects().then((allObjects) => {
             if (isMounted) setObjects(allObjects);
         });
-        return () => { isMounted = false }
+        return () => {
+            isMounted = false;
+        };
     }, []);
-
 
     const goToAddObject = () => {
         navigation.navigate("Ajouter un objet");
@@ -68,9 +73,9 @@ export default function ({ route, navigation }) {
 
     if (routeData != undefined) {
         if (routeData.updateData) {
-            saveObjects().then(objects => {
+            saveObjects().then((objects) => {
                 setObjects(objects);
-            })
+            });
             routeData.updateData = false;
         }
     }
@@ -116,7 +121,9 @@ export default function ({ route, navigation }) {
                                             fontSize="2xl"
                                             fontWeight="semibold"
                                             onPress={() =>
-                                                goToPreview({ id: object.ObjectID })
+                                                goToPreview({
+                                                    id: object.ObjectID,
+                                                })
                                             }
                                         >
                                             {object.Name}
@@ -124,12 +131,7 @@ export default function ({ route, navigation }) {
                                     </Center>
                                     <IconButton
                                         style={styles.icon}
-                                        onPress={() => {
-                                            Crud.deleteObject(object.ObjectID);
-                                            saveObjects().then(objects => {
-                                                setObjects(objects);
-                                            })
-                                        }}
+                                        onPress={() => setIsOpen(!isOpen)}
                                         icon={
                                             <Icon
                                                 as={MaterialIcons}
@@ -147,6 +149,51 @@ export default function ({ route, navigation }) {
                                         {object.Status}
                                     </Badge>
                                 </Box>
+                                <AlertDialog
+                                    leastDestructiveRef={cancel}
+                                    isOpen={isOpen}
+                                    onClose={onClose}
+                                >
+                                    <AlertDialog.Content>
+                                        <AlertDialog.CloseButton />
+                                        <AlertDialog.Header>
+                                            Supprimer cet objet ?
+                                        </AlertDialog.Header>
+                                        <AlertDialog.Body>
+                                            Cette action sera irréversible !
+                                        </AlertDialog.Body>
+                                        <AlertDialog.Footer>
+                                            <Button.Group space={2}>
+                                                <Button
+                                                    variant="unstyled"
+                                                    colorScheme="coolGray"
+                                                    onPress={onClose}
+                                                    ref={cancel}
+                                                >
+                                                    Annuler
+                                                </Button>
+                                                <Button
+                                                    colorScheme="danger"
+                                                    onPress={() => {
+                                                        Crud.deleteObject(
+                                                            object.ObjectID
+                                                        );
+                                                        saveObjects().then(
+                                                            (objects) => {
+                                                                setObjects(
+                                                                    objects
+                                                                );
+                                                                onClose;
+                                                            }
+                                                        );
+                                                    }}
+                                                >
+                                                    Supprimer
+                                                </Button>
+                                            </Button.Group>
+                                        </AlertDialog.Footer>
+                                    </AlertDialog.Content>
+                                </AlertDialog>
                             </View>
                         ))}
                     </Stack>
