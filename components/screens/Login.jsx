@@ -12,22 +12,11 @@ import {
 import { StyleSheet, LogBox } from "react-native";
 import { useEffect, useState } from "react";
 import { FontAwesome5, Entypo } from "@expo/vector-icons";
-import * as FileSystem from "expo-file-system";
+import * as Crud from '../Crud';
 
-LogBox.ignoreLogs(["NativeBase:"]);
+Crud.disconnectUsers();
 
-const fileURI = FileSystem.documentDirectory + "accounts.json";
-
-const createFile = async (accounts) => {
-    await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(accounts));
-    // console.log(await FileSystem.getInfoAsync(fileURI))
-};
-
-const fileExists = async (uri) => {
-    return (await FileSystem.getInfoAsync(uri)).exists;
-};
-
-export default ({ navigation }) => {
+export default ({navigation}) => {
     const [email, setEmail] = useState("");
     const [pwd, setPwd] = useState("");
 
@@ -36,30 +25,32 @@ export default ({ navigation }) => {
 
     const [accounts, setAccounts] = useState([]);
 
-    const readFile = async () => {
-        if (await fileExists(fileURI)) {
-            const content = await FileSystem.readAsStringAsync(fileURI);
-            setAccounts(JSON.parse(content));
-        }
-    };
+    const saveAccounts = async () => {
+        let allAccounts = await Crud.getAllAccounts();
+        console.log("\nallAccounts --> " + JSON.stringify(allAccounts));
+        return allAccounts;
+    }
     useEffect(() => {
-        readFile();
+        let isMounted = true;
+        saveAccounts().then(allAccounts => {
+            if (isMounted) setAccounts(allAccounts);
+        });
+        return () => { isMounted = false }
     }, []);
 
-    const submitForm = () => {
-        console.log("Form submitted");
-        let good = false;
-        accounts.forEach((e) => {
-            if (e.email == email && e.pwd == pwd) {
-                good = true;
-                e.connected = true;
-                createFile(accounts);
-                navigation.navigate("Ajouter un objet");
+    const submitLoginForm = () => {
+        let good = false
+        accounts.forEach(e => {
+            if (e.Email == email && e.Password == pwd) {
+                good = true
+                Crud.updateAccountConnexion(e.ID, true)
+                saveAccounts()
+                navigation.navigate("Annuaires")
             }
         });
         if (!good) {
-            alert("Mauvais email ou mot de passe !");
-            console.log("Wrong email or password, please retry");
+            alert("Mauvais email ou mot de passe, réessayez !")
+            console.log("Wrong email or password, please retry")
         }
     };
 
@@ -95,6 +86,8 @@ export default ({ navigation }) => {
                         onChangeText={(val) => {
                             setEmail(val);
                         }}
+                        autoCapitalize="none"
+                        keyboardType="email-address"
                     />
 
                     <Input
@@ -135,7 +128,7 @@ export default ({ navigation }) => {
                         w="150"
                         h="10"
                         variant="outline"
-                        onPress={submitForm}
+                        onPress={submitLoginForm}
                     >
                         Log in
                     </Button>

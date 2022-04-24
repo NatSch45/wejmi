@@ -3,13 +3,27 @@ import { NativeBaseProvider, Button, useTheme, Box } from "native-base";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Item from "./components/screens/Object.jsx";
+import Object from "./components/screens/Object.jsx";
 import Register from "./components/screens/Register.jsx";
 import Login from "./components/screens/Login.jsx";
 import Index from "./components/screens/Index.jsx";
 import AddSomething from "./components/screens/AddSomething.jsx";
 import Modify from "./components/screens/Modify.jsx";
+import Directory from "./components/screens/Directory.jsx";
+import Preview from "./components/screens/Preview.jsx";
 import { extendTheme } from "native-base";
+import * as Crud from "./components/Crud";
+
+// Crud.dropObjectsTable();
+// Crud.dropRoomsTable();
+// Crud.dropFurnituresTable();
+// Crud.dropCategoriesTable();
+
+Crud.createAccountsTable();
+Crud.createRoomsTable();
+Crud.createFurnituresTable();
+Crud.createCategoriesTable();
+Crud.createObjectsTable();
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
@@ -42,16 +56,20 @@ export default function App() {
                     />
                     <Screen
                         name="Ajouter un objet"
-                        component={Item}
-                        options={{
-                            headerStyle: { backgroundColor: "#1e90ff" },
+                        component={Object}
+                        options={({ route }) => {
+                            return {
+                                headerStyle: { backgroundColor: "#1e90ff" },
+                            };
                         }}
                     />
                     <Screen
                         name="Modifier un objet"
                         component={Modify}
-                        options={{
+                        options={({ route }) => {
+                            return {
                             headerStyle: { backgroundColor: "#1e90ff" },
+                            };
                         }}
                     />
                     <Screen
@@ -62,6 +80,22 @@ export default function App() {
                                 title: route.params.nom,
                                 headerStyle: { backgroundColor: "#1e90ff" },
                             };
+                        }}
+                    />
+                    <Screen
+                        name="Annuaires"
+                        component={Directory}
+                        options={({ route }) => {
+                            return {
+                                headerStyle: { backgroundColor: "#1e90ff" },
+                            };
+                        }}
+                    />
+                    <Screen
+                        name="Détail"
+                        component={Preview}
+                        options={{
+                            headerStyle: { backgroundColor: "#1e90ff" },
                         }}
                     />
                 </Navigator>

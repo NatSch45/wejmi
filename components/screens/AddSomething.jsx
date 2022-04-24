@@ -1,36 +1,42 @@
-import { StyleSheet, Image } from "react-native";
+import { StyleSheet } from "react-native";
 import {
-    CheckIcon,
-    FormControl,
-    Icon,
     ScrollView,
-    Select,
-    TextArea,
-    useTheme,
-    Text,
     Heading,
 } from "native-base";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
     NativeBaseProvider,
     Input,
-    Button,
-    View,
     Stack,
     KeyboardAvoidingView,
 } from "native-base";
 import Add from "../Button.jsx";
-
-import * as FileSystem from "expo-file-system";
+import * as Crud from "../Crud.jsx";
 
 export default function AddSomething({ route, navigation }) {
     const data = route.params;
     const [name, setName] = useState("");
 
     const saveAndGoBack = () => {
-        console.log(name);
         if (name != "") {
-            navigation.navigate("Ajouter un objet", name);
+            switch (data.elem) {
+                case "room":
+                    Crud.insertNewRoom(name);
+                    break;
+
+                case "furniture":
+                    Crud.insertNewFurniture(name);
+                    break;
+
+                case "category":
+                    Crud.insertNewCategory(name);
+                    break;
+            
+                default:
+                    alert("Erreur");
+                    break;
+            }
+            navigation.navigate("Ajouter un objet", { updateData: true });
         } else {
             alert("Veuillez entrer un nom");
         }
@@ -63,7 +69,7 @@ export default function AddSomething({ route, navigation }) {
                             onChangeText={(name) => setName(name)}
                             w="75%"
                         ></Input>
-                        <Add action={saveAndGoBack}></Add>
+                        <Add action={saveAndGoBack} label={"Ajouter"}></Add>
                     </Stack>
                 </ScrollView>
             </KeyboardAvoidingView>
