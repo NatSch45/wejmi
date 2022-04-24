@@ -7,7 +7,7 @@ import {
     Heading,
     Center,
     Box,
-    FormControl,
+    HStack,
     Select,
     View,
     IconButton,
@@ -17,6 +17,7 @@ import {
     Pressable,
     Badge,
     AlertDialog,
+    Text,
 } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useState, useEffect, useRef } from "react";
@@ -144,17 +145,40 @@ export default function ({ route, navigation }) {
                             />
                         }
                     ></IconButton>
-                    <Box w="3/4" maxW="150" style={{ left: 50 }}>
+                </Stack>
+                <HStack alignItems="center" style={{ left: 30 }}>
+                    <Center h="20">
                         <Select
                             minWidth="100"
                             accessibilityLabel="Choose Service"
                             placeholder="Choose Service"
-                            mt={1}
+                            mr={1}
                         >
                             <Select.Item label="UX Research" value="ux" />
                         </Select>
-                    </Box>
-                </Stack>
+                    </Center>
+                    <Center h="20">
+                        <Select
+                            minWidth="100"
+                            accessibilityLabel="Choose Service"
+                            placeholder="Choose Service"
+                            mr={1}
+                        >
+                            <Select.Item label="UX Research" value="ux" />
+                        </Select>
+                    </Center>
+                    <Center h="20">
+                        <Select
+                            minWidth="100"
+                            accessibilityLabel="Choose Service"
+                            placeholder="Choose Service"
+                            mr={1}
+                        >
+                            <Select.Item label="UX Research" value="ux" />
+                        </Select>
+                    </Center>
+                </HStack>
+
                 <ScrollView style={styles.container}>
                     <Stack
                         marginBottom={10}
@@ -322,7 +346,7 @@ const styles = StyleSheet.create({
     },
     sortAlpha: {
         position: "absolute",
-        left: 10,
+        left: "45%",
         borderRadius: 50,
     },
 });
