@@ -69,7 +69,7 @@ export default function AddSomething({ route, navigation }) {
                             onChangeText={(name) => setName(name)}
                             w="75%"
                         ></Input>
-                        <Add action={saveAndGoBack}></Add>
+                        <Add action={saveAndGoBack} label={"Ajouter"}></Add>
                     </Stack>
                 </ScrollView>
             </KeyboardAvoidingView>

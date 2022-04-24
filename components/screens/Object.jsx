@@ -172,9 +172,9 @@ export default function Item({ route, navigation }) {
                             >
                                 {rooms.map((room) => (
                                     <Select.Item
-                                        key={room.ID}
+                                        key={room.RoomID}
                                         label={room.Name}
-                                        value={room.ID}
+                                        value={room.RoomID}
                                     />
                                 ))}
                                 <Select.Item
@@ -225,9 +225,9 @@ export default function Item({ route, navigation }) {
                             >
                                 {furnitures.map((furniture) => (
                                     <Select.Item
-                                        key={furniture.ID}
+                                        key={furniture.FurnitureID}
                                         label={furniture.Name}
-                                        value={furniture.ID}
+                                        value={furniture.FurnitureID}
                                     />
                                 ))}
                                 <Select.Item
@@ -278,9 +278,9 @@ export default function Item({ route, navigation }) {
                             >
                                 {categories.map((category) => (
                                     <Select.Item
-                                        key={category.ID}
+                                        key={category.CategoryID}
                                         label={category.Name}
-                                        value={category.ID}
+                                        value={category.CategoryID}
                                     />
                                 ))}
                                 <Select.Item

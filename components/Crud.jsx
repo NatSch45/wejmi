@@ -28,7 +28,7 @@ export const insertNewAccount = (username, email, password) => {
 //* Init the Objects table
 export const createObjectsTable = () => {
     db.transaction((tx) => {
-        tx.executeSql("CREATE TABLE IF NOT EXISTS Objects (ID INTEGER PRIMARY KEY NOT NULL, Name TEXT, UserID INTEGER, Container TEXT, RoomID INTEGER, FurnitureID INTEGER, CategoryID INTEGER, Picture TEXT, Status TEXT, FOREIGN KEY (UserID) REFERENCES Accounts(ID), FOREIGN KEY (RoomID) REFERENCES Rooms(ID), FOREIGN KEY (FurnitureID) REFERENCES Furnitures(ID), FOREIGN KEY (CategoryID) REFERENCES Categories(ID))", [], (_, result) => {}, (_, error) => {
+        tx.executeSql("CREATE TABLE IF NOT EXISTS Objects (ObjectID INTEGER PRIMARY KEY NOT NULL, Name TEXT, UserID INTEGER, Container TEXT, Room INTEGER, Furniture INTEGER, Category INTEGER, Picture TEXT, Status TEXT, FOREIGN KEY (UserID) REFERENCES Accounts(ID) ON DELETE CASCADE, FOREIGN KEY (Room) REFERENCES Rooms(ID) ON DELETE CASCADE, FOREIGN KEY (Furniture) REFERENCES Furnitures(ID) ON DELETE CASCADE, FOREIGN KEY (Category) REFERENCES Categories(ID) ON DELETE CASCADE)", [], (_, result) => {}, (_, error) => {
             console.log(error);
         });
     });
@@ -40,7 +40,7 @@ export const insertNewObject = async (name, container, roomID, furnitureID, cate
     db.transaction((tx) => {
         console.log(`Name: ${name}, Container: ${container}, RoomID: ${roomID}, FurnitureID: ${furnitureID}, CategoryID: ${categoryID}, Picture: "static URI", userID: ${userID}`);
 
-        tx.executeSql("INSERT INTO Objects (UserID, Name, Container, RoomID, FurnitureID, CategoryID, Picture, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [userID, name, container, roomID, furnitureID, categoryID, picture, "Default"], (_, result) => {
+        tx.executeSql("INSERT INTO Objects (UserID, Name, Container, Room, Furniture, Category, Picture, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [userID, name, container, roomID, furnitureID, categoryID, picture, "Default"], (_, result) => {
             console.log();
         }, (_, error) => {
             console.log(error);
@@ -52,7 +52,7 @@ export const insertNewObject = async (name, container, roomID, furnitureID, cate
 //* Init the Rooms table
 export const createRoomsTable = () => {
     db.transaction((tx) => {
-        tx.executeSql("CREATE TABLE IF NOT EXISTS Rooms (ID INTEGER PRIMARY KEY NOT NULL, Name TEXT)");
+        tx.executeSql("CREATE TABLE IF NOT EXISTS Rooms (RoomID INTEGER PRIMARY KEY NOT NULL, Name TEXT)");
     });
 }
 
@@ -67,7 +67,7 @@ export const insertNewRoom = (name) => {
 //* Init the Categories table
 export const createCategoriesTable = () => {
     db.transaction((tx) => {
-        tx.executeSql("CREATE TABLE IF NOT EXISTS Categories (ID INTEGER PRIMARY KEY NOT NULL, Name TEXT)");
+        tx.executeSql("CREATE TABLE IF NOT EXISTS Categories (CategoryID INTEGER PRIMARY KEY NOT NULL, Name TEXT)");
     });
 }
 
@@ -82,7 +82,7 @@ export const insertNewCategory = (name) => {
 //* Init the Furnitures table
 export const createFurnituresTable = () => {
     db.transaction((tx) => {
-        tx.executeSql("CREATE TABLE IF NOT EXISTS Furnitures (ID INTEGER PRIMARY KEY NOT NULL, Name TEXT)");
+        tx.executeSql("CREATE TABLE IF NOT EXISTS Furnitures (FurnitureID INTEGER PRIMARY KEY NOT NULL, Name TEXT)");
     });
 }
 
@@ -113,7 +113,7 @@ export const getAllAccounts = async () => {
 export const getAllObjects = async () => {
     return new Promise(async resolve => {
         db.transaction((tx) => {
-            tx.executeSql("SELECT ID, Name, Picture, Status FROM Objects", [], (insertID, rows) => {
+            tx.executeSql("SELECT ObjectID, Name, Picture, Status FROM Objects", [], (insertID, rows) => {
                 const allObjects = rows.rows._array;
                 resolve(allObjects);
             });
@@ -125,9 +125,11 @@ export const getAllObjects = async () => {
 export const getObject = async (id) => {
     return new Promise(async resolve => {
         db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM Objects WHERE ID = ?", [id], (insertID, rows) => {
+            tx.executeSql("SELECT Objects.Name, Container, Picture, Status, Rooms.Name AS RoomName, Furnitures.Name AS FurnitureName, Categories.Name AS CategoryName FROM Objects INNER JOIN Rooms ON Rooms.RoomID = Objects.Room INNER JOIN Furnitures ON Objects.Furniture = Furnitures.FurnitureID INNER JOIN Categories ON Objects.Category = Categories.CategoryID WHERE ObjectID = ?", [id], (insertID, rows) => {
                 const object = rows.rows._array;
                 resolve(object);
+            }, (_, error) => {
+                console.log("ERROR: " + error);
             });
         });
     });
@@ -187,7 +189,7 @@ export const getCurrentUserID = async () => {
 //* Update one account connexion from an ID
 export const updateAccountConnexion = (accountID, connected) => {
     db.transaction((tx) => {
-        tx.executeSql("UPDATE Accounts SET connected = ? WHERE id = ?", [connected, accountID]);
+        tx.executeSql("UPDATE Accounts SET connected = ? WHERE ID = ?", [connected, accountID]);
     });
 }
 
@@ -201,18 +203,20 @@ export const disconnectUsers = () => {
 //* Update one object details from an ID
 export const updateObjectDetails = (objectID, name, container, room, furniture, category, picture) => {
     db.transaction((tx) => {
-        tx.executeSql("UPDATE Objects SET (Name = ?, Container = ?, Room = ?, Furniture = ?, Category = ?, Picture = ?) WHERE ID = ?", [name, container, room, furniture, category, picture, objectID]);
+        tx.executeSql("UPDATE Objects SET (Name = ?, Container = ?, Room = ?, Furniture = ?, Category = ?, Picture = ?) WHERE ObjectID = ?", [name, container, room, furniture, category, picture, objectID]);
     });
 }
 
 //* Update one object status from an ID
 export const updateObjectStatus = (objectID, status) => {
     db.transaction((tx) => {
-        tx.executeSql("UPDATE Objects SET Status = ? WHERE ID = ?", [status, objectID]);
+        tx.executeSql("UPDATE Objects SET Status = ? WHERE ObjectID = ?", [status, objectID]);
     });
 }
 
+
 //? -----DELETE-----
+
 
 //* Delete all accounts of database
 export const deleteAllAccounts = () => {
@@ -245,27 +249,48 @@ export const deleteAllObjects = () => {
 //* Delete one object from its ID
 export const deleteObject = (objectID) => {
     db.transaction((tx) => {
-        tx.executeSql("DELETE FROM Objects WHERE ID = ?", [objectID]);
+        tx.executeSql("DELETE FROM Objects WHERE ObjectID = ?", [objectID]);
+    });
+}
+
+//* Drop Rooms table
+export const dropRoomsTable = () => {
+    db.transaction((tx) => {
+        tx.executeSql("DROP TABLE IF EXISTS Rooms");
     });
 }
 
 //* Delete one room from its ID
 export const deleteRoom = (roomID) => {
     db.transaction((tx) => {
-        tx.executeSql("DELETE FROM Rooms WHERE ID = ?", [roomID]);
+        tx.executeSql("DELETE FROM Rooms WHERE RoomID = ?", [roomID]);
+    });
+}
+
+//* Drop Categories table
+export const dropCategoriesTable = () => {
+    db.transaction((tx) => {
+        tx.executeSql("DROP TABLE IF EXISTS Categories");
     });
 }
 
 //* Delete one category from its ID
 export const deleteCategory = (categoryID) => {
     db.transaction((tx) => {
-        tx.executeSql("DELETE FROM Categories WHERE ID = ?", [categoryID]);
+        tx.executeSql("DELETE FROM Categories WHERE CategoryID = ?", [categoryID]);
+    });
+}
+
+//* Drop Furnitures table
+export const dropFurnituresTable = () => {
+    db.transaction((tx) => {
+        tx.executeSql("DROP TABLE IF EXISTS Furnitures");
     });
 }
 
 //* Delete one furniture from its ID
 export const deleteFurniture = (furnitureID) => {
     db.transaction((tx) => {
-        tx.executeSql("DELETE FROM Furnitures WHERE ID = ?", [furnitureID]);
+        tx.executeSql("DELETE FROM Furnitures WHERE FurnitureID = ?", [furnitureID]);
     });
 }

@@ -1,10 +1,6 @@
 import {
     StyleSheet,
     Image,
-    Animated,
-    TouchableHighlight,
-    TouchableOpacity,
-    StatusBar,
 } from "react-native";
 import {
     ScrollView,
@@ -13,22 +9,30 @@ import {
     NativeBaseProvider,
     Text,
     Heading,
-    VStack,
-    Center,
-    Box,
     HStack,
-    View,
-    IconButton,
-    Icon,
-    Fab,
     Badge,
 } from "native-base";
+import { useState, useEffect } from "react";
 import Add from "../Button.jsx";
-import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState } from "react";
+import * as Crud from "../Crud";
 
-export default function ({ navigation, route }) {
+export default function ({ route }) {
     const data = route.params;
+
+    const [object, setObject] = useState([]);
+
+    const saveObject = async () => {
+        let oneObject = await Crud.getObject(data.id);
+        return oneObject[0];
+    }
+    useEffect(() => {
+        let isMounted = true;
+        saveObject().then(oneObject => {
+            if (isMounted) setObject(oneObject);
+        });
+        return () => { isMounted = false }
+    }, []);
+
     return (
         <NativeBaseProvider>
             <KeyboardAvoidingView
@@ -55,7 +59,7 @@ export default function ({ navigation, route }) {
                     >
                         <Image
                             source={{
-                                uri: "https://picsum.photos/400/400",
+                                uri: object.Picture,
                             }}
                             style={styles.image}
                         ></Image>
@@ -85,7 +89,7 @@ export default function ({ navigation, route }) {
                                         ml="-1"
                                         style={{ marginBottom: 10 }}
                                     >
-                                        {data.item}
+                                        {object.Name}
                                     </Heading>
                                     <Text
                                         fontSize="xs"
@@ -94,7 +98,7 @@ export default function ({ navigation, route }) {
                                         ml="-0.5"
                                         mt="-1"
                                     >
-                                        Catégorie
+                                        {object.CategoryName}
                                     </Text>
                                     <Text
                                         fontSize="xs"
@@ -103,7 +107,7 @@ export default function ({ navigation, route }) {
                                         ml="-0.5"
                                         mt="-1"
                                     >
-                                        Pièce
+                                        {object.RoomName}
                                     </Text>
                                     <Text
                                         fontSize="xs"
@@ -112,10 +116,10 @@ export default function ({ navigation, route }) {
                                         ml="-0.5"
                                         mt="-1"
                                     >
-                                        Meuble
+                                        {object.FurnitureName}
                                     </Text>
                                 </Stack>
-                                <Text fontWeight="400">Description</Text>
+                                <Text fontWeight="400">{object.Container}</Text>
                                 <HStack
                                     alignItems="center"
                                     space="4"
@@ -127,7 +131,7 @@ export default function ({ navigation, route }) {
                                             colorScheme="info"
                                             variant="solid"
                                         >
-                                            DÉPLACÉ
+                                        {object.Status}
                                         </Badge>
                                     </HStack>
                                 </HStack>

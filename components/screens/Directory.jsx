@@ -42,8 +42,8 @@ export default function ({ route, navigation }) {
     const goToAddObject = () => {
         navigation.navigate("Ajouter un objet");
     };
-    const goToPreview = ({ item }) => {
-        navigation.navigate("Détail", { item });
+    const goToPreview = ({ id }) => {
+        navigation.navigate("Détail", { id });
     };
 
     const AddObject = () => {
@@ -102,7 +102,7 @@ export default function ({ route, navigation }) {
                     >
                         {/* TEMPLATE FOR DIRECTORY */}
                         {objects.map((object) => (
-                            <View style={styles.item} key={object.ID}>
+                            <View style={styles.item} key={object.ObjectID}>
                                 <Box>
                                     <Image
                                         source={{
@@ -116,7 +116,7 @@ export default function ({ route, navigation }) {
                                             fontSize="2xl"
                                             fontWeight="semibold"
                                             onPress={() =>
-                                                goToPreview({ item: object.Name })
+                                                goToPreview({ id: object.ObjectID })
                                             }
                                         >
                                             {object.Name}
@@ -125,7 +125,7 @@ export default function ({ route, navigation }) {
                                     <IconButton
                                         style={styles.icon}
                                         onPress={() => {
-                                            Crud.deleteObject(object.ID);
+                                            Crud.deleteObject(object.ObjectID);
                                             saveObjects().then(objects => {
                                                 setObjects(objects);
                                             })
