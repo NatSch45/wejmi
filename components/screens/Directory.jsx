@@ -7,6 +7,8 @@ import {
     Heading,
     Center,
     Box,
+    FormControl,
+    Select,
     View,
     IconButton,
     Button,
@@ -45,7 +47,7 @@ export default function ({ route, navigation }) {
             case "DÉPLACÉ TEMPORAIREMENT":
                 Crud.updateStatusObject(id, "warning", "PERDU");
                 break;
-        
+
             default:
                 console.log("ERROR: Wrong status value");
                 break;
@@ -116,13 +118,42 @@ export default function ({ route, navigation }) {
                 keyboardVerticalOffset={60}
             >
                 <Stack
-                    marginBottom={10}
+                    marginBottom={5}
                     space={1}
                     style={{ marginTop: 10 }}
                     alignItems="flex-start"
                     w="100%"
                 >
                     <Heading style={styles.title}>Annuaires</Heading>
+                </Stack>
+                <Stack
+                    marginBottom={10}
+                    space={1}
+                    style={{ marginTop: 5 }}
+                    alignItems="flex-start"
+                    w="100%"
+                >
+                    <IconButton
+                        style={styles.sortAlpha}
+                        icon={
+                            <Icon
+                                as={MaterialIcons}
+                                size="6"
+                                name="sort-by-alpha"
+                                color="blue.500"
+                            />
+                        }
+                    ></IconButton>
+                    <Box w="3/4" maxW="150" style={{ left: 50 }}>
+                        <Select
+                            minWidth="100"
+                            accessibilityLabel="Choose Service"
+                            placeholder="Choose Service"
+                            mt={1}
+                        >
+                            <Select.Item label="UX Research" value="ux" />
+                        </Select>
+                    </Box>
                 </Stack>
                 <ScrollView style={styles.container}>
                     <Stack
@@ -158,7 +189,10 @@ export default function ({ route, navigation }) {
                                     </Center>
                                     <IconButton
                                         style={styles.icon}
-                                        onPress={() => {setIsOpen(!isOpen); cancel.current = object.ObjectID}}
+                                        onPress={() => {
+                                            setIsOpen(!isOpen);
+                                            cancel.current = object.ObjectID;
+                                        }}
                                         icon={
                                             <Icon
                                                 as={MaterialIcons}
@@ -212,11 +246,16 @@ export default function ({ route, navigation }) {
                                                     colorScheme="danger"
                                                     onPress={() => {
                                                         onClose();
-                                                        const objectID = cancel.current
-                                                        Crud.deleteObject(objectID);
+                                                        const objectID =
+                                                            cancel.current;
+                                                        Crud.deleteObject(
+                                                            objectID
+                                                        );
                                                         saveObjects().then(
                                                             (objects) => {
-                                                                setObjects(objects);
+                                                                setObjects(
+                                                                    objects
+                                                                );
                                                             }
                                                         );
                                                     }}
@@ -280,5 +319,10 @@ const styles = StyleSheet.create({
         position: "absolute",
         right: -5,
         top: -40,
+    },
+    sortAlpha: {
+        position: "absolute",
+        left: 10,
+        borderRadius: 50,
     },
 });
