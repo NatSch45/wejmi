@@ -28,7 +28,7 @@ export const insertNewAccount = (username, email, password) => {
 //* Init the Objects table
 export const createObjectsTable = () => {
     db.transaction((tx) => {
-        tx.executeSql("CREATE TABLE IF NOT EXISTS Objects (ObjectID INTEGER PRIMARY KEY NOT NULL, Name TEXT, UserID INTEGER, Container TEXT, Room INTEGER, Furniture INTEGER, Category INTEGER, Picture TEXT, Status TEXT, FOREIGN KEY (UserID) REFERENCES Accounts(ID) ON DELETE CASCADE, FOREIGN KEY (Room) REFERENCES Rooms(ID) ON DELETE CASCADE, FOREIGN KEY (Furniture) REFERENCES Furnitures(ID) ON DELETE CASCADE, FOREIGN KEY (Category) REFERENCES Categories(ID) ON DELETE CASCADE)", [], (_, result) => {}, (_, error) => {
+        tx.executeSql("CREATE TABLE IF NOT EXISTS Objects (ObjectID INTEGER PRIMARY KEY NOT NULL, Name TEXT, UserID INTEGER, Container TEXT, Room INTEGER, Furniture INTEGER, Category INTEGER, Picture TEXT, Status TEXT, Color TEXT, FOREIGN KEY (UserID) REFERENCES Accounts(ID) ON DELETE CASCADE, FOREIGN KEY (Room) REFERENCES Rooms(ID) ON DELETE CASCADE, FOREIGN KEY (Furniture) REFERENCES Furnitures(ID) ON DELETE CASCADE, FOREIGN KEY (Category) REFERENCES Categories(ID) ON DELETE CASCADE)", [], (_, result) => {}, (_, error) => {
             console.log(error);
         });
     });
@@ -40,7 +40,7 @@ export const insertNewObject = async (name, container, roomID, furnitureID, cate
     db.transaction((tx) => {
         console.log(`Name: ${name}, Container: ${container}, RoomID: ${roomID}, FurnitureID: ${furnitureID}, CategoryID: ${categoryID}, Picture: "static URI", userID: ${userID}`);
 
-        tx.executeSql("INSERT INTO Objects (UserID, Name, Container, Room, Furniture, Category, Picture, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [userID, name, container, roomID, furnitureID, categoryID, picture, "Default"], (_, result) => {
+        tx.executeSql("INSERT INTO Objects (UserID, Name, Container, Room, Furniture, Category, Picture, Status, Color) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [userID, name, container, roomID, furnitureID, categoryID, picture, "A SA PLACE", "success"], (_, result) => {
             console.log();
         }, (_, error) => {
             console.log(error);
@@ -113,7 +113,7 @@ export const getAllAccounts = async () => {
 export const getAllObjects = async () => {
     return new Promise(async resolve => {
         db.transaction((tx) => {
-            tx.executeSql("SELECT ObjectID, Name, Picture, Status FROM Objects", [], (insertID, rows) => {
+            tx.executeSql("SELECT ObjectID, Name, Picture, Status, Color FROM Objects", [], (insertID, rows) => {
                 const allObjects = rows.rows._array;
                 resolve(allObjects);
             });
@@ -125,7 +125,7 @@ export const getAllObjects = async () => {
 export const getObject = async (id) => {
     return new Promise(async resolve => {
         db.transaction((tx) => {
-            tx.executeSql("SELECT Objects.Name, Container, Picture, Status, Rooms.Name AS RoomName, Furnitures.Name AS FurnitureName, Categories.Name AS CategoryName FROM Objects INNER JOIN Rooms ON Rooms.RoomID = Objects.Room INNER JOIN Furnitures ON Objects.Furniture = Furnitures.FurnitureID INNER JOIN Categories ON Objects.Category = Categories.CategoryID WHERE ObjectID = ?", [id], (insertID, rows) => {
+            tx.executeSql("SELECT Objects.Name, Container, Picture, Status, Color, Rooms.Name AS RoomName, Furnitures.Name AS FurnitureName, Categories.Name AS CategoryName FROM Objects INNER JOIN Rooms ON Rooms.RoomID = Objects.Room INNER JOIN Furnitures ON Objects.Furniture = Furnitures.FurnitureID INNER JOIN Categories ON Objects.Category = Categories.CategoryID WHERE ObjectID = ?", [id], (insertID, rows) => {
                 const object = rows.rows._array;
                 resolve(object);
             }, (_, error) => {
@@ -211,6 +211,13 @@ export const updateObjectDetails = (objectID, name, container, room, furniture, 
 export const updateObjectStatus = (objectID, status) => {
     db.transaction((tx) => {
         tx.executeSql("UPDATE Objects SET Status = ? WHERE ObjectID = ?", [status, objectID]);
+    });
+}
+
+//* Update one object color from an ID
+export const updateStatusObject = (objectID, color, status) => {
+    db.transaction((tx) => {
+        tx.executeSql("UPDATE Objects SET Color = ?, Status = ? WHERE ObjectID = ?", [color, status, objectID]);
     });
 }
 

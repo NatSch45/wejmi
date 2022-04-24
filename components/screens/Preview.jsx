@@ -1,7 +1,4 @@
-import {
-    StyleSheet,
-    Image,
-} from "react-native";
+import { StyleSheet, Image } from "react-native";
 import {
     ScrollView,
     Stack,
@@ -24,13 +21,15 @@ export default function ({ route }) {
     const saveObject = async () => {
         let oneObject = await Crud.getObject(data.id);
         return oneObject[0];
-    }
+    };
     useEffect(() => {
         let isMounted = true;
-        saveObject().then(oneObject => {
+        saveObject().then((oneObject) => {
             if (isMounted) setObject(oneObject);
         });
-        return () => { isMounted = false }
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     return (
@@ -128,10 +127,10 @@ export default function ({ route }) {
                                     <HStack alignItems="center">
                                         <Badge
                                             style={styles.badge}
-                                            colorScheme="info"
+                                            colorScheme={object.Color}
                                             variant="solid"
                                         >
-                                        {object.Status}
+                                            {object.Status}
                                         </Badge>
                                     </HStack>
                                 </HStack>

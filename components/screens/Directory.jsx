@@ -13,6 +13,7 @@ import {
     Button,
     Icon,
     Fab,
+    Pressable,
     Badge,
     AlertDialog,
 } from "native-base";
@@ -28,6 +29,29 @@ export default function ({ route, navigation }) {
     const [isOpen, setIsOpen] = useState(false);
     const onClose = () => setIsOpen(false);
     const cancel = React.useRef(null);
+
+    const statusObject = async (value) => {
+        const statusValue = value.status;
+        const id = value.id;
+        if (statusValue == "PERDU") {
+            let updateObject = Crud.updateStatusObject(
+                id,
+                "success",
+                "A SA PLACE"
+            );
+            return updateObject;
+        } else if (statusValue == "A SA PLACE") {
+            let updateObject = Crud.updateStatusObject(
+                id,
+                "info",
+                "DÉPLACÉ TEMPORAIREMENT"
+            );
+            return updateObject;
+        } else if (statusValue == "DÉPLACÉ TEMPORAIREMENT") {
+            let updateObject = Crud.updateStatusObject(id, "warning", "PERDU");
+            return updateObject;
+        }
+    };
 
     const saveObjects = async () => {
         let allObjects = await Crud.getAllObjects();
@@ -141,13 +165,23 @@ export default function ({ route, navigation }) {
                                             />
                                         }
                                     ></IconButton>
-                                    <Badge
+                                    <Pressable
                                         style={styles.badge}
-                                        colorScheme="info"
-                                        variant="solid"
+                                        onPress={() =>
+                                            statusObject({
+                                                id: object.ObjectID,
+                                                status: object.Status,
+                                                color: object.Color,
+                                            })
+                                        }
                                     >
-                                        {object.Status}
-                                    </Badge>
+                                        <Badge
+                                            colorScheme={object.Color}
+                                            variant="solid"
+                                        >
+                                            {object.Status}
+                                        </Badge>
+                                    </Pressable>
                                 </Box>
                                 <AlertDialog
                                     leastDestructiveRef={cancel}
