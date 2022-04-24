@@ -108,6 +108,10 @@ Vous allez également pouvoir :
 
 -   👉 [Démo]() (Coming soon)
 
+# BUG :
+
+-   Quand un nouveau compte est créé, il n'est pas possible de se connecter. Il faut revenir sur la page d'accueil et se connecter ensuite.
+
 # 👥 Équipe
 
 -   `Elouan DUMONT` alias [@ByMSRT](https://github.com/ByMSRT)
