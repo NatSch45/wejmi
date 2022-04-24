@@ -112,29 +112,33 @@ export default function ({ route, navigation }) {
         saveObjects().then((objects) => {
             setObjects(objects);
         });
-        filterObjects();
     };
 
     //* Filter objects depending to room, furniture, category or alphabetically
     const filterObjects = () => {
         let updatedObjects = fullDataObjects;
 
-        if (alphab) updatedObjects = updatedObjects.sort((objectA, objectB) => {
-            const textA = objectA.Name.toUpperCase();
-            const textB = objectB.Name.toUpperCase();
-            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-        });
+        if (alphab)
+            updatedObjects = updatedObjects.sort((objectA, objectB) => {
+                const textA = objectA.Name.toUpperCase();
+                const textB = objectB.Name.toUpperCase();
+                return textA < textB ? -1 : textA > textB ? 1 : 0;
+            });
         if (room != "" && room != "Default") {
-            updatedObjects = updatedObjects.filter(obj => obj.RoomID == room);
-        };
+            updatedObjects = updatedObjects.filter((obj) => obj.RoomID == room);
+        }
         if (furniture != "" && furniture != "Default") {
-            updatedObjects = updatedObjects.filter(obj => obj.FurnitureID == furniture);
-        };
+            updatedObjects = updatedObjects.filter(
+                (obj) => obj.FurnitureID == furniture
+            );
+        }
         if (category != "" && category != "Default") {
-            updatedObjects = updatedObjects.filter(obj => obj.CategoryID == category);
-        };
+            updatedObjects = updatedObjects.filter(
+                (obj) => obj.CategoryID == category
+            );
+        }
         setObjects(updatedObjects);
-    }
+    };
     useEffect(() => {
         filterObjects();
     }, [alphab]);
@@ -191,19 +195,19 @@ export default function ({ route, navigation }) {
                         w="100%"
                     >
                         <IconButton
-                        style={styles.sortAlpha}
-                        onPress={() => {
-                            let tempAlphab = alphab;
-                            setAlphab(!tempAlphab);
-                        }}
-                        icon={
-                            <Icon
-                                as={MaterialIcons}
-                                size="6"
-                                name="sort-by-alpha"
-                                color="blue.500"
-                            />
-                        }
+                            style={styles.sortAlpha}
+                            onPress={() => {
+                                let tempAlphab = alphab;
+                                setAlphab(!tempAlphab);
+                            }}
+                            icon={
+                                <Icon
+                                    as={MaterialIcons}
+                                    size="6"
+                                    name="sort-by-alpha"
+                                    color="blue.500"
+                                />
+                            }
                         ></IconButton>
                     </Stack>
                     <HStack alignItems="center" style={{ left: 30 }}>
@@ -216,7 +220,11 @@ export default function ({ route, navigation }) {
                                 onValueChange={setRoom}
                                 mr={1}
                             >
-                                <Select.Item key={0} label={"Default"} value={"Default"}/>
+                                <Select.Item
+                                    key={0}
+                                    label={"Default"}
+                                    value={"Default"}
+                                />
                                 {rooms.map((aRoom) => (
                                     <Select.Item
                                         key={aRoom.RoomID}
@@ -235,7 +243,11 @@ export default function ({ route, navigation }) {
                                 onValueChange={setFurniture}
                                 mr={1}
                             >
-                                <Select.Item key={0} label={"Default"} value={"Default"}/>
+                                <Select.Item
+                                    key={0}
+                                    label={"Default"}
+                                    value={"Default"}
+                                />
                                 {furnitures.map((aFurniture) => (
                                     <Select.Item
                                         key={aFurniture.FurnitureID}
@@ -254,7 +266,11 @@ export default function ({ route, navigation }) {
                                 onValueChange={setCategory}
                                 mr={1}
                             >
-                                <Select.Item key={0} label={"Default"} value={"Default"}/>
+                                <Select.Item
+                                    key={0}
+                                    label={"Default"}
+                                    value={"Default"}
+                                />
                                 {categories.map((aCategory) => (
                                     <Select.Item
                                         key={aCategory.CategoryID}

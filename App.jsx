@@ -13,10 +13,11 @@ import Preview from "./components/screens/Preview.jsx";
 import { extendTheme } from "native-base";
 import * as Crud from "./components/Crud";
 
-// Crud.dropObjectsTable();
-// Crud.dropRoomsTable();
-// Crud.dropFurnituresTable();
-// Crud.dropCategoriesTable();
+/* Crud.dropObjectsTable();
+Crud.dropRoomsTable();
+Crud.dropFurnituresTable();
+Crud.dropCategoriesTable();
+Crud.deleteAllAccounts(); */
 
 Crud.createAccountsTable();
 Crud.createRoomsTable();
