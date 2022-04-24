@@ -19,15 +19,36 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useState, useEffect, useRef } from "react";
 import * as Crud from "../Crud";
+import { copyAsync } from "expo-file-system";
 
 export default function ({ route, navigation }) {
     const routeData = route.params;
 
     const [objects, setObjects] = useState([]);
 
+    const [alphab, setAlphab] = useState(false);
+    const [room, setRoom] = useState("");
+    const [furniture, setFurniture] = useState("");
+    const [category, setCategory] = useState("");
+
     const [isOpen, setIsOpen] = useState(false);
     const onClose = () => setIsOpen(false);
     const cancel = useRef(null);
+
+    //* Filter objects depending to room, furniture, category or alphabetically
+    const filter = () => {
+        const updatedObjects = objects;
+
+        if (alphab) updatedObjects.sort((objectA, objectB) => {
+            const textA = objectA.Name.toUpperCase();
+            const textB = objectB.Name.toUpperCase();
+            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+        });
+        if (room) updatedObjects.filter(obj => obj.RoomID == room);
+        if (furniture) updatedObjects.filter(obj => obj.FurnitureID == furniture);
+        if (category) updatedObjects.filter(obj => obj.CategoryID == category);
+        setObjects(updatedObjects);
+    }
 
     const statusObject = async (object) => {
         const statusValue = object.status;
