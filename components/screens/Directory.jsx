@@ -17,11 +17,12 @@ import {
     Pressable,
     Badge,
     AlertDialog,
-    Text,
+    PresenceTransition,
 } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useState, useEffect, useRef } from "react";
 import * as Crud from "../Crud";
+import Add from "../Button.jsx";
 
 export default function ({ route, navigation }) {
     const routeData = route.params;
@@ -31,6 +32,8 @@ export default function ({ route, navigation }) {
     const [isOpen, setIsOpen] = useState(false);
     const onClose = () => setIsOpen(false);
     const cancel = useRef(null);
+
+    const [toggle, setToggle] = useState(false);
 
     const statusObject = async (object) => {
         const statusValue = object.status;
@@ -101,6 +104,70 @@ export default function ({ route, navigation }) {
         );
     };
 
+    const OpenFilter = () => {
+        return (
+            <View>
+                <PresenceTransition
+                    visible={toggle}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1, transition: { duration: 250 } }}
+                >
+                    <Stack
+                        marginBottom={10}
+                        space={1}
+                        style={{ marginTop: 5 }}
+                        alignItems="flex-start"
+                        w="100%"
+                    >
+                        <IconButton
+                            style={styles.sortAlpha}
+                            icon={
+                                <Icon
+                                    as={MaterialIcons}
+                                    size="6"
+                                    name="sort-by-alpha"
+                                    color="blue.500"
+                                />
+                            }
+                        ></IconButton>
+                    </Stack>
+                    <HStack alignItems="center" style={{ left: 30 }}>
+                        <Center h="20">
+                            <Select
+                                minWidth="100"
+                                accessibilityLabel="Choose Service"
+                                placeholder="Choose Service"
+                                mr={1}
+                            >
+                                <Select.Item label="UX Research" value="ux" />
+                            </Select>
+                        </Center>
+                        <Center h="20">
+                            <Select
+                                minWidth="100"
+                                accessibilityLabel="Choose Service"
+                                placeholder="Choose Service"
+                                mr={1}
+                            >
+                                <Select.Item label="UX Research" value="ux" />
+                            </Select>
+                        </Center>
+                        <Center h="20">
+                            <Select
+                                minWidth="100"
+                                accessibilityLabel="Choose Service"
+                                placeholder="Choose Service"
+                                mr={1}
+                            >
+                                <Select.Item label="UX Research" value="ux" />
+                            </Select>
+                        </Center>
+                    </HStack>
+                </PresenceTransition>
+            </View>
+        );
+    };
+
     if (routeData != undefined) {
         if (routeData.updateData) {
             saveObjects().then((objects) => {
@@ -126,58 +193,22 @@ export default function ({ route, navigation }) {
                     w="100%"
                 >
                     <Heading style={styles.title}>Annuaires</Heading>
+                    {/* HERE */}
+                    <Button
+                        style={{ position: "absolute", right: 20, top: 50 }}
+                        onPress={() => setToggle(!toggle)}
+                    >
+                        Filtre
+                    </Button>
                 </Stack>
                 <Stack
-                    marginBottom={10}
+                    marginBottom={5}
                     space={1}
-                    style={{ marginTop: 5 }}
+                    style={{ marginTop: 10 }}
                     alignItems="flex-start"
                     w="100%"
-                >
-                    <IconButton
-                        style={styles.sortAlpha}
-                        icon={
-                            <Icon
-                                as={MaterialIcons}
-                                size="6"
-                                name="sort-by-alpha"
-                                color="blue.500"
-                            />
-                        }
-                    ></IconButton>
-                </Stack>
-                <HStack alignItems="center" style={{ left: 30 }}>
-                    <Center h="20">
-                        <Select
-                            minWidth="100"
-                            accessibilityLabel="Choose Service"
-                            placeholder="Choose Service"
-                            mr={1}
-                        >
-                            <Select.Item label="UX Research" value="ux" />
-                        </Select>
-                    </Center>
-                    <Center h="20">
-                        <Select
-                            minWidth="100"
-                            accessibilityLabel="Choose Service"
-                            placeholder="Choose Service"
-                            mr={1}
-                        >
-                            <Select.Item label="UX Research" value="ux" />
-                        </Select>
-                    </Center>
-                    <Center h="20">
-                        <Select
-                            minWidth="100"
-                            accessibilityLabel="Choose Service"
-                            placeholder="Choose Service"
-                            mr={1}
-                        >
-                            <Select.Item label="UX Research" value="ux" />
-                        </Select>
-                    </Center>
-                </HStack>
+                ></Stack>
+                {toggle == true && <OpenFilter></OpenFilter>}
 
                 <ScrollView style={styles.container}>
                     <Stack
