@@ -27,6 +27,7 @@ Crud.createObjectsTable();
 const { Navigator, Screen } = createNativeStackNavigator();
 
 export default function App() {
+    const scheme = useColorScheme();
     return (
         <NativeBaseProvider theme={theme}>
             <NavigationContainer>

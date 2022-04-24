@@ -10,14 +10,16 @@ import {
     KeyboardAvoidingView,
     NativeBaseProvider,
     Input,
+    useTheme,
 } from "native-base";
 import { useState, useEffect } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MenuIcon from "../MenuIcon.jsx";
 import Add from "../Button.jsx";
-import * as Crud from "../Crud.jsx"
+import * as Crud from "../Crud.jsx";
 
 export default function Item({ route, navigation }) {
+    const { colors } = useTheme();
     const routeData = route.params;
 
     //* Form data
@@ -37,17 +39,19 @@ export default function Item({ route, navigation }) {
         const allCategories = await Crud.getCategories();
         const allFurnitures = await Crud.getFurnitures();
         return [allRooms, allCategories, allFurnitures];
-    }
+    };
     useEffect(() => {
         let isMounted = true;
-        saveLists().then(lists => {
+        saveLists().then((lists) => {
             if (isMounted) {
                 setRooms(lists[0]);
                 setCategories(lists[1]);
                 setFurnitures(lists[2]);
             }
         });
-        return () => { isMounted = false }
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     const submitNewObjectForm = async () => {
@@ -59,7 +63,14 @@ export default function Item({ route, navigation }) {
             category != ""
         ) {
             if (image != "") {
-                await Crud.insertNewObject(name, description, room, furniture, category, image);
+                await Crud.insertNewObject(
+                    name,
+                    description,
+                    room,
+                    furniture,
+                    category,
+                    image
+                );
                 navigation.navigate("Annuaires", { updateData: true });
             } else {
                 alert("Veuillez ajouter une image !");
@@ -75,7 +86,7 @@ export default function Item({ route, navigation }) {
 
     if (routeData != undefined) {
         if (routeData.updateData) {
-            saveLists().then(lists => {
+            saveLists().then((lists) => {
                 setRooms(lists[0]);
                 setCategories(lists[1]);
                 setFurnitures(lists[2]);
@@ -128,9 +139,7 @@ export default function Item({ route, navigation }) {
                             style={styles.spaceBetween}
                             isRequired
                         >
-                            <FormControl.Label>
-                                Compartiment 
-                            </FormControl.Label>
+                            <FormControl.Label>Compartiment</FormControl.Label>
                             <TextArea
                                 h={20}
                                 placeholder="Description"
@@ -240,7 +249,7 @@ export default function Item({ route, navigation }) {
                                     onPress={() =>
                                         goToAddSomething({
                                             nom: "Ajouter un meuble :",
-                                            elem: "furniture"
+                                            elem: "furniture",
                                         })
                                     }
                                 />
