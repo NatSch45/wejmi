@@ -9,25 +9,14 @@ import {
     IconButton,
     KeyboardAvoidingView,
 } from "native-base";
-import { StyleSheet, LogBox } from "react-native";
+import { StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
 import { MaterialIcons, FontAwesome5, Entypo } from "@expo/vector-icons";
-import * as FileSystem from "expo-file-system";
+import * as Crud from '../Crud';
 
-LogBox.ignoreLogs(["NativeBase:"]);
+Crud.disconnectUsers();
 
-const fileURI = FileSystem.documentDirectory + "accounts.json";
-
-const createFile = async (accounts) => {
-    await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(accounts));
-    // console.log(await FileSystem.getInfoAsync(fileURI))
-};
-
-const fileExists = async (uri) => {
-    return (await FileSystem.getInfoAsync(uri)).exists;
-};
-
-export default ({ navigation }) => {
+export default ({navigation}) => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [pwd, setPwd] = useState("");
@@ -40,46 +29,41 @@ export default ({ navigation }) => {
 
     const [accounts, setAccounts] = useState([]);
 
-    const readFile = async () => {
-        if (await fileExists(fileURI)) {
-            const content = await FileSystem.readAsStringAsync(fileURI);
-            setAccounts(JSON.parse(content));
-        }
-    };
+    const saveAccounts = async () => {
+        let allAccounts = await Crud.getAllAccounts();
+        console.log("\nallAccounts --> " + JSON.stringify(allAccounts));
+        return allAccounts;
+    }
     useEffect(() => {
-        readFile();
+        let isMounted = true;
+        saveAccounts().then(allAccounts => {
+            if (isMounted) setAccounts(allAccounts);
+        });
+        return () => { isMounted = false }
     }, []);
 
     const checkEmail = (newEmail) => {
         let good = true;
-        accounts.forEach((e) => {
-            if (e.email == newEmail) {
-                console.log("WRONG EMAIL\n");
-                good = false;
-            }
-        });
+        if (accounts !== undefined) {
+            accounts.forEach(e => {
+                if (e.email == newEmail) {
+                    console.log("WRONG EMAIL\n");
+                    good = false;
+                }
+            });
+        }
+
         return good;
     };
 
-    const submitRegisterForm = () => {
+    const submitRegisterForm = async () => {
         console.log("Form submitted");
-        console.log(accounts + "\n");
         if (pwd === verifPwd) {
             if (checkEmail(email)) {
-                console.log(
-                    `Username: ${username}, Email: ${email}, Pwd: ${pwd}, VerifPwd: ${verifPwd}`
-                );
-                const newAccounts = [
-                    ...accounts,
-                    {
-                        username: username,
-                        email: email,
-                        pwd: pwd,
-                        connected: false,
-                    },
-                ];
-                setAccounts(newAccounts);
-                createFile(newAccounts);
+                console.log(`Username: ${username}, Email: ${email}, Pwd: ${pwd}, VerifPwd: ${verifPwd}`);
+                Crud.insertNewAccount(username, email, pwd);
+                saveAccounts();
+                console.log(accounts + "\n");
                 navigation.navigate("Log In");
             } else {
                 console.log("An account with this email already exists\n");
@@ -121,6 +105,7 @@ export default ({ navigation }) => {
                         onChangeText={(val) => {
                             setUsername(val);
                         }}
+                        autoCapitalize="none"
                     />
 
                     <Input
@@ -139,6 +124,8 @@ export default ({ navigation }) => {
                         onChangeText={(val) => {
                             setEmail(val);
                         }}
+                        autoCapitalize="none"
+                        keyboardType="email-address"
                     />
 
                     <Input
@@ -230,7 +217,5 @@ export default ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-    eyeIcon: {
-        color: "#919191",
-    },
+    //
 });

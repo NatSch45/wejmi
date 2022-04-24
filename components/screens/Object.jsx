@@ -6,141 +6,94 @@ import {
     ScrollView,
     Select,
     TextArea,
-    useTheme,
     Stack,
     KeyboardAvoidingView,
     NativeBaseProvider,
     Input,
+    useTheme,
 } from "native-base";
 import { useState, useEffect } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MenuIcon from "../MenuIcon.jsx";
 import Add from "../Button.jsx";
-import * as FileSystem from "expo-file-system";
+import * as Crud from "../Crud.jsx";
 
-const fileURI = FileSystem.documentDirectory + "image.json";
-
-const createFile = async (form) => {
-    await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(form));
-};
-
-const fileExists = async (uri) => {
-    return (await FileSystem.getInfoAsync(uri)).exists;
-};
-
-export default function Item({ navigation }) {
+export default function Item({ route, navigation }) {
     const { colors } = useTheme();
+    const routeData = route.params;
+
+    //* Form data
     const [name, setName] = useState("");
-    const [desription, setDescription] = useState("");
+    const [description, setDescription] = useState("");
     const [room, setRoom] = useState("");
     const [furniture, setFurniture] = useState("");
-    const [categorie, setCategorie] = useState("");
+    const [category, setCategory] = useState("");
     const [image, setImage] = useState("");
 
-    const [form, setForm] = useState([]);
+    const [rooms, setRooms] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [furnitures, setFurnitures] = useState([]);
 
-    const readFile = async () => {
-        if (await fileExists(fileURI)) {
-            const content = await FileSystem.readAsStringAsync(fileURI);
-            setForm(JSON.parse(content));
-            /* console.log(JSON.parse(content)); */
-        }
+    const saveLists = async () => {
+        const allRooms = await Crud.getRooms();
+        const allCategories = await Crud.getCategories();
+        const allFurnitures = await Crud.getFurnitures();
+        return [allRooms, allCategories, allFurnitures];
     };
     useEffect(() => {
-        readFile();
+        let isMounted = true;
+        saveLists().then((lists) => {
+            if (isMounted) {
+                setRooms(lists[0]);
+                setCategories(lists[1]);
+                setFurnitures(lists[2]);
+            }
+        });
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
-    const saveForm = async () => {
+    const submitNewObjectForm = async () => {
         if (
             name != "" &&
-            desription != "" &&
+            description != "" &&
             room != "" &&
             furniture != "" &&
-            categorie != ""
+            category != ""
         ) {
             if (image != "") {
-                const newForm = [
-                    ...form,
-                    {
-                        Nom: name,
-                        Description: desription,
-                        Pièce: room,
-                        Meuble: furniture,
-                        Catégorie: categorie,
-                        Image: image,
-                    },
-                ];
-                setForm(newForm);
-                createFile(newForm);
+                await Crud.insertNewObject(
+                    name,
+                    description,
+                    room,
+                    furniture,
+                    category,
+                    image
+                );
+                navigation.navigate("Annuaires", { updateData: true });
             } else {
                 alert("Veuillez ajouter une image !");
             }
         } else {
             alert("Veuillez remplir tous les champs !");
         }
-        /* console.log("Saving form");
-        console.log(
-            `Nom : ${name} | Description : ${desription} | Pièce : ${room} | Meuble : ${furniture} | Catégorie : ${categorie} | Image : ${image}`
-        ); */
     };
 
-    const goToAddSomething = ({ nom }) => {
-        navigation.navigate("Ajouter une option", { nom });
+    const goToAddSomething = ({ nom, elem }) => {
+        navigation.navigate("Ajouter une option", { nom, elem });
     };
 
-    const listRoom = [
-        {
-            id: 1,
-            label: "Chambre",
-            value: "Chambre",
-        },
-        {
-            id: 2,
-            label: "Cuisine",
-            value: "Cuisine",
-        },
-        {
-            id: 3,
-            label: "Salle de bain",
-            value: "Salle de bain",
-        },
-        {
-            id: 4,
-            label: "Salle à manger",
-            value: "Salle à manger",
-        },
-        {
-            id: 5,
-            label: "Jardin",
-            value: "Jardin",
-        },
-    ];
-
-    const listFurniture = [
-        {
-            id: 1,
-            label: "Armoire",
-            value: "Armoire",
-        },
-        {
-            id: 2,
-            label: "Placard",
-            value: "Placard",
-        },
-    ];
-
-    const listCategorie = [
-        {
-            id: 1,
-            label: "Outil",
-            value: "Outil",
-        },
-        {
-            id: 2,
-            label: "Documents",
-            value: "Documents",
-        },
-    ];
+    if (routeData != undefined) {
+        if (routeData.updateData) {
+            saveLists().then((lists) => {
+                setRooms(lists[0]);
+                setCategories(lists[1]);
+                setFurnitures(lists[2]);
+            });
+            routeData.updateData = false;
+        }
+    }
 
     return (
         <NativeBaseProvider>
@@ -186,14 +139,12 @@ export default function Item({ navigation }) {
                             style={styles.spaceBetween}
                             isRequired
                         >
-                            <FormControl.Label>
-                                Compartiment :
-                            </FormControl.Label>
+                            <FormControl.Label>Compartiment</FormControl.Label>
                             <TextArea
                                 h={20}
                                 placeholder="Description"
                                 maxW="300"
-                                value={desription}
+                                value={description}
                                 onChangeText={setDescription}
                             />
                         </FormControl>
@@ -204,7 +155,7 @@ export default function Item({ navigation }) {
                             maxW="300"
                             isRequired
                         >
-                            <FormControl.Label>Pièce :</FormControl.Label>
+                            <FormControl.Label>Pièce</FormControl.Label>
                             <Select
                                 minWidth="200"
                                 accessibilityLabel="Choisir la pièce"
@@ -228,11 +179,11 @@ export default function Item({ navigation }) {
                                 }}
                                 mt="1"
                             >
-                                {listRoom.map((item) => (
+                                {rooms.map((room) => (
                                     <Select.Item
-                                        key={item.id}
-                                        label={item.label}
-                                        value={item.value}
+                                        key={room.RoomID}
+                                        label={room.Name}
+                                        value={room.RoomID}
                                     />
                                 ))}
                                 <Select.Item
@@ -245,6 +196,7 @@ export default function Item({ navigation }) {
                                     onPress={() =>
                                         goToAddSomething({
                                             nom: "Ajouter une pièce :",
+                                            elem: "room",
                                         })
                                     }
                                 />
@@ -256,7 +208,7 @@ export default function Item({ navigation }) {
                             style={styles.spaceBetween}
                             isRequired
                         >
-                            <FormControl.Label>Meuble :</FormControl.Label>
+                            <FormControl.Label>Meuble</FormControl.Label>
                             <Select
                                 minWidth="200"
                                 accessibilityLabel="Choisir le meuble"
@@ -280,11 +232,11 @@ export default function Item({ navigation }) {
                                 }}
                                 mt="1"
                             >
-                                {listFurniture.map((item) => (
+                                {furnitures.map((furniture) => (
                                     <Select.Item
-                                        key={item.id}
-                                        label={item.label}
-                                        value={item.value}
+                                        key={furniture.FurnitureID}
+                                        label={furniture.Name}
+                                        value={furniture.FurnitureID}
                                     />
                                 ))}
                                 <Select.Item
@@ -297,6 +249,7 @@ export default function Item({ navigation }) {
                                     onPress={() =>
                                         goToAddSomething({
                                             nom: "Ajouter un meuble :",
+                                            elem: "furniture",
                                         })
                                     }
                                 />
@@ -308,11 +261,11 @@ export default function Item({ navigation }) {
                             style={styles.spaceBetween}
                             isRequired
                         >
-                            <FormControl.Label>Catégorie :</FormControl.Label>
+                            <FormControl.Label>Catégorie</FormControl.Label>
                             <Select
                                 minWidth="200"
-                                value={categorie}
-                                onValueChange={setCategorie}
+                                value={category}
+                                onValueChange={setCategory}
                                 dropdownIcon={
                                     <Icon
                                         as={MaterialCommunityIcons}
@@ -332,11 +285,11 @@ export default function Item({ navigation }) {
                                 }}
                                 mt="1"
                             >
-                                {listCategorie.map((item) => (
+                                {categories.map((category) => (
                                     <Select.Item
-                                        key={item.id}
-                                        label={item.label}
-                                        value={item.value}
+                                        key={category.CategoryID}
+                                        label={category.Name}
+                                        value={category.CategoryID}
                                     />
                                 ))}
                                 <Select.Item
@@ -349,12 +302,13 @@ export default function Item({ navigation }) {
                                     onPress={() =>
                                         goToAddSomething({
                                             nom: "Ajouter une catégorie :",
+                                            elem: "category",
                                         })
                                     }
                                 />
                             </Select>
                         </FormControl>
-                        <Add action={saveForm}></Add>
+                        <Add action={submitNewObjectForm} label="Ajouter"></Add>
                     </Stack>
                     <MenuIcon onImageChosen={setImage}></MenuIcon>
                 </ScrollView>

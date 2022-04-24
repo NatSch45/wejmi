@@ -14,7 +14,7 @@
 
 ## 📝 Présentation du projet
 
-Le projet consistait à développer une application mobile (Android et IOS) permettant de renseigner un annuaire contenant des objets rangés tout en précisant l'endroit et son statut (perdu, déplacé etc).
+Le projet consistait à développer une application mobile (Android et IOS) permettant de construire un annuaire contenant des objets rangés tout en précisant leurs localisations et leurs statuts (perdu, déplacé etc).
 
 > ![Wejmi](Wejmi.png)
 
@@ -37,7 +37,7 @@ Avec l'application WEJMI™, vous allez pouvoir :
 
 -   Gestion en base de données SQLite
 
-Vous allez pouvoir aussi :
+Vous allez également pouvoir :
 
 -   Vous inscrire sur l'application WEJMI™ et vous y connecter.
 
@@ -73,7 +73,7 @@ Vous allez pouvoir aussi :
 
 ## Sur Android :
 
--   Ouvrez l'application `Expo Go` et **scannez le QR Code**, celui lancera le projet.
+-   Ouvrez l'application `Expo Go` et **scannez le QR Code**, celui-ci lancera le projet.
 
 ## Sur IOS :
 
@@ -89,24 +89,28 @@ Vous allez pouvoir aussi :
 | Components      | Description                                                                                 |
 | --------------- | ------------------------------------------------------------------------------------------- |
 | Button.jsx      | Le bouton pour ajouter un nouvel objet.                                                     |
-| MenuIcon.jsx    | Menu permettant de choisir l'appareil photo ou sa gallerie pour ajouter une image.          |
+| MenuIcon.jsx    | Menu permettant de choisir l'appareil photo ou la galerie pour ajouter une image.           |
 | ImagePicker.jsx | Fonction qui permet de lancer l'appareil photo ou de pacourir dans la galerie du téléphone. |
 | Crud.jsx        | Toutes les fonctions liées à l'interrogation de la base de données.                         |
 
-| Screens          | Description                                                      |
-| ---------------- | ---------------------------------------------------------------- |
-| App.jsx          | Répertorie toutes les navigations possible dans l'application.   |
-| Index.jsx        | Page d'accueil qui peut rediriger vers Login ou Register.        |
-| Register.jsx     | Permet de se créer un compte.                                    |
-| Login.jsx        | Permet de se connecter au compte.                                |
-| Object.jsx       | L'ajout d'un nouvel objet dans l'annuaire.                       |
-| AddSomething.jsx | L'ajout d'une nouvelle pièce, catégorie ou meuble.               |
-| Directory.jsx    | L'annuaire avec tous les objets.                                 |
-| Preview.jsx      | Un objet en particularité avec les informations supplémentaires. |
+| Screens          | Description                                                                |
+| ---------------- | -------------------------------------------------------------------------- |
+| App.jsx          | Répertorie toutes les navigations possible dans l'application.             |
+| Index.jsx        | Page d'accueil qui peut rediriger vers Login ou Register.                  |
+| Register.jsx     | Permet de se créer un compte.                                              |
+| Login.jsx        | Permet de se connecter au compte.                                          |
+| Object.jsx       | Page permettant l'ajout d'un nouvel objet dans l'annuaire.                 |
+| AddSomething.jsx | Page permettant l'ajout d'une nouvelle pièce, catégorie ou meuble.         |
+| Directory.jsx    | Page contenant l'annuaire des objets.                                      |
+| Preview.jsx      | Page avec un objet en particularité avec les informations supplémentaires. |
 
 # 🎥 Démonstration
 
 -   👉 [Démo]() (Coming soon)
+
+# BUG :
+
+-   Quand un nouveau compte est créé, il n'est pas possible de se connecter. Il faut revenir sur la page d'accueil et se connecter ensuite.
 
 # 👥 Équipe
 
@@ -117,6 +121,8 @@ Vous allez pouvoir aussi :
 ---
 
 _Nantes YNOV Campus - B2 Informatique - 2021/2022_
+
+_Projet Fil Rouge - Wejmi - Par Julien SOSTHENE - 2022_
 
 ---
 
