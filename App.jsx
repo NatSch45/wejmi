@@ -19,34 +19,34 @@ export default function App() {
         <NativeBaseProvider theme={theme}>
             <NavigationContainer>
                 <Navigator>
-                    {/*<Screen
+                    <Screen
                         name="Index"
                         component={Index}
                         options={{
                             headerStyle: { backgroundColor: "#1e90ff" },
                         }}
-                    />*/}
-                    {/*<Screen
+                    />
+                    <Screen
                         name="Register"
                         component={Register}
                         options={{
                             headerStyle: { backgroundColor: "#1e90ff" },
                         }}
-                    />*/}
-                    {/*<Screen
+                    />
+                    <Screen
                         name="Log In"
                         component={Login}
                         options={{
                             headerStyle: { backgroundColor: "#1e90ff" },
                         }}
-                    />*/}
-                    {/*<Screen
+                    />
+                    <Screen
                         name="Ajouter un objet"
                         component={Item}
                         options={{
                             headerStyle: { backgroundColor: "#1e90ff" },
                         }}
-                    />*/}
+                    />
                     <Screen
                         name="Modifier un objet"
                         component={Modify}
@@ -54,7 +54,7 @@ export default function App() {
                             headerStyle: { backgroundColor: "#1e90ff" },
                         }}
                     />
-                    {/*<Screen
+                    <Screen
                         name="Ajouter une option"
                         component={AddSomething}
                         options={({ route }) => {
@@ -63,7 +63,7 @@ export default function App() {
                                 headerStyle: { backgroundColor: "#1e90ff" },
                             };
                         }}
-                    />*/}
+                    />
                 </Navigator>
             </NavigationContainer>
             <StatusBar style="auto" />

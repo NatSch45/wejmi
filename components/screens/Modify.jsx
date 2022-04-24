@@ -29,11 +29,11 @@ const fileExists = async (uri) => {
 
 export default function Item({ navigation }) {
     //const { colors } = useTheme();
-    const [name, setName] = useState("");
-    const [desription, setDescription] = useState("");
-    const [room, setRoom] = useState("");
-    const [furniture, setFurniture] = useState("");
-    const [categorie, setCategorie] = useState("");
+    const [name, modifyName] = useState("");
+    const [desription, modifyDescription] = useState("");
+    const [room, modifyRoom] = useState("");
+    const [furniture, modifyFurniture] = useState("");
+    const [categorie, modifyCategorie] = useState("");
     const [image] = useState("");
 
     const [form, setForm] = useState([]);
@@ -41,7 +41,7 @@ export default function Item({ navigation }) {
     const readFile = async () => {
         if (await fileExists(fileURI)) {
             const content = await FileSystem.readAsStringAsync(fileURI);
-            saveForm(JSON.parse(content));
+            modifyForm(JSON.parse(content));
             /* console.log(JSON.parse(content)); */
         }
     };
@@ -49,7 +49,7 @@ export default function Item({ navigation }) {
         readFile();
     }, []);
 
-    const saveForm = async () => {
+    const modifyForm = async () => {
         if (
             name != "" &&
             desription != "" &&
@@ -69,17 +69,17 @@ export default function Item({ navigation }) {
                         Image: image,
                     },
                 ];
-                saveForm(setForm);
+                saveForm(modifyForm);
             } else {
                 alert("Veuillez ajouter une image !");
             }
         } else {
             alert("Veuillez remplir tous les champs !");
         }
-        /* console.log("Saving form");
+        console.log("Saving form");
         console.log(
             `Nom : ${name} | Description : ${desription} | Pièce : ${room} | Meuble : ${furniture} | Catégorie : ${categorie} | Image : ${image}`
-        ); */
+        );
     };
 
     const goToAddSomething = ({ nom }) => {
