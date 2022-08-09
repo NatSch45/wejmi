@@ -36,9 +36,9 @@
         },
         "plugins": [
             [
-                "react-native-vision-camera",
+                "expo-image-picker",
                 {
-                    "cameraPermissionText": "${PRODUCT_NAME} needs access to your camera"
+                    "photosPermission": "The app accesses your photos to let you share them with your friends."
                 }
             ]
         ]
